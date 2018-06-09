@@ -9,6 +9,10 @@ pymysql = "*"
 flask-sqlalchemy = "*"
 flask-script = "*"
 pytest = "*"
+"flake8" = "*"
+flask-migrate = "*"
+flask-wtf = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

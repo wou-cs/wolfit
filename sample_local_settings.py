@@ -1,4 +1,7 @@
-# Chris' local settings - do not check into source control.
+# Sample local settings - modify this and save to a local file
+# that you do not check into version control.
+# Then set the environment variable WOLFIT_DEV_SETTINGS to point
+# to this file.
 
 DB_HOST = 'localhost'
 BLOG_DATABASE_NAME = 'wolfit'
