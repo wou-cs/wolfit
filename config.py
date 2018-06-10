@@ -4,7 +4,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
-    print("Config: setting up CONFIG")
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     if os.environ.get('DB_HOST'):
         print(f"Config: found a real DB_HOST config <{os.environ.get('DB_HOST')}>")
