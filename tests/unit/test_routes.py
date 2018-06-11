@@ -20,26 +20,24 @@ def login(client, username, password):
     ), follow_redirects=True)
 
 
-# def logout(client):
-#     return client.get('/logout', follow_redirects=True)
+def logout(client):
+    return client.get('/logout', follow_redirects=True)
 
 
 def test_no_posts_no_user(client):
     """Start with a blank database."""
 
-    result = client.get('/')
-    assert b'No entries' in result.data
-    assert b'Anonymous' in result.data
+    response = client.get('/')
+    assert b'No entries' in response.data
+    assert b'Anonymous' in response.data
 
 
-def test_no_posts_loggin_in_user(client, test_user):
+def test_no_posts_logged_in_user(client, test_user):
     """
     Given a new system with just a registered user
     When the user logs in
     Then they should be greeted in person but see no posts
     """
-    users = User.query.all()
-    print(f"NUMBER OF USERS: { len(users) }")
     response = client.post('/login', data=dict(
         username=test_user.username,
         password='yoko'
@@ -47,3 +45,19 @@ def test_no_posts_loggin_in_user(client, test_user):
     assert response.status_code == 200
     assert b'No entries' in response.data
     assert b'john' in response.data
+
+
+def test_should_be_anon_after_logout(client, test_user):
+    """
+    Given a new system with just a registered user
+    When the user logs in then logs out
+    Then the site should greet them as anonymous
+    """
+    response = client.post('/login', data=dict(
+        username=test_user.username,
+        password='yoko'
+    ), follow_redirects=True)
+    assert response.status_code == 200
+    assert b'john' in response.data
+    response = logout(client)
+    assert b'Anonymous' in response.data
