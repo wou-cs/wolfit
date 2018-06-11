@@ -8,7 +8,7 @@
     {% endif %}
     {% if posts %}
       {% for post in posts %}
-      <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+      <div><p>{{ post.title }}</p></div>
       {% endfor %}
     {% else %}
       <p>No entries yet.</p>

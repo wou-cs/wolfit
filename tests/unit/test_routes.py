@@ -1,7 +1,7 @@
 import pytest
 from flask import url_for
 from app import db
-from app.models import User
+from app.models import User, Post
 
 
 @pytest.fixture
@@ -11,6 +11,15 @@ def test_user():
     db.session.add(u)
     db.session.commit()
     return u
+
+
+@pytest.fixture
+def single_post():
+    user = test_user()
+    p = Post(title='First post', body='Something saucy', user_id=user.id)
+    db.session.add(p)
+    db.session.commit()
+    return p
 
 
 def login(client, username, password):
@@ -60,4 +69,15 @@ def test_should_be_anon_after_logout(client, test_user):
     assert response.status_code == 200
     assert b'john' in response.data
     response = logout(client)
+    assert b'Anonymous' in response.data
+
+
+def test_should_see_single_post(client, single_post):
+    """
+    Given there is a single post created
+    When an anonymous user visits the site
+    Then the user should see the post headline
+    """
+    response = client.get('/')
+    assert b'First post' in response.data
     assert b'Anonymous' in response.data
