@@ -9,7 +9,11 @@ from app.forms import LoginForm
 @app.route('/index')
 def index():
     posts = Post.query.all()
-    return render_template('index.html', user=current_user, posts=posts)
+    greeting_name = 'Anonymous'
+    if current_user.is_authenticated:
+        greeting_name = current_user.username
+
+    return render_template('index.html', greeting_name=greeting_name, posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
