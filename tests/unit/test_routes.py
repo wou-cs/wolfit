@@ -47,10 +47,7 @@ def test_no_posts_logged_in_user(client, test_user):
     When the user logs in
     Then they should be greeted in person but see no posts
     """
-    response = client.post('/login', data=dict(
-        username=test_user.username,
-        password='yoko'
-    ), follow_redirects=True)
+    response = login(client, test_user.username, 'yoko')
     assert response.status_code == 200
     assert b'No entries' in response.data
     assert b'john' in response.data
@@ -62,10 +59,7 @@ def test_should_be_anon_after_logout(client, test_user):
     When the user logs in then logs out
     Then the site should greet them as anonymous
     """
-    response = client.post('/login', data=dict(
-        username=test_user.username,
-        password='yoko'
-    ), follow_redirects=True)
+    response = login(client, test_user.username, 'yoko')
     assert response.status_code == 200
     assert b'john' in response.data
     response = logout(client)
@@ -81,3 +75,30 @@ def test_should_see_single_post(client, single_post):
     response = client.get('/')
     assert b'First post' in response.data
     assert b'Anonymous' in response.data
+
+
+def test_should_see_login_form_when_not_logged_in(client, single_post):
+    response = client.get('/login')
+    assert b'Sign In' in response.data
+    assert b'Username' in response.data
+
+
+def test_user_should_be_redirected_to_index_if_logged_in(client, test_user):
+    login(client, test_user.username, 'yoko')
+    response = client.get('/login')
+    assert response.status_code == 302
+    assert "/index" in response.headers["Location"]
+
+
+def test_bad_password_should_be_redirected_to_login(client, test_user):
+    response = client.post('/login', data=dict(
+        username=test_user.username,
+        password="paul",
+    ), follow_redirects=False)
+    assert response.status_code == 302
+    assert "/login" in response.headers["Location"]
+
+def test_empty_post_should_be_redirected_to_login(client, test_user):
+    response = client.post('/login', follow_redirects=False)
+    assert response.status_code == 302
+    assert "/login" in response.headers["Location"]

@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
 from app import app
 from app.models import User, Post
@@ -28,7 +28,10 @@ def login():
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         return redirect(url_for('index'))
-    return render_template('login.html', title='Sign In', form=form)
+    elif form.is_submitted():
+        return redirect(url_for('login'))
+    else:
+        return render_template('login.html', title='Sign In', form=form)
 
 
 @app.route('/logout')

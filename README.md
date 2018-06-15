@@ -10,3 +10,11 @@ BLOG_DATABASE_NAME = 'wolfit_dev'
 DB_USERNAME = 'wolfit-app'
 DB_PASSWORD = 'the password you choose'
 ```
+
+## Test Coverage
+
+To look at test coverage, simply run:
+
+``` sh
+./cov.sh
+```

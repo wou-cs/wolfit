@@ -16,6 +16,7 @@ flask-migrate = "*"
 flask-login = "*"
 selenium = "*"
 flask-testing = "*"
+coverage = "*"
 
 [dev-packages]
 

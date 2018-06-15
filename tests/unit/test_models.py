@@ -1,5 +1,4 @@
-from app.models import User
-
+from app.models import User, Post
 
 def test_new_user():
     """
@@ -16,3 +15,17 @@ def test_new_user():
     assert new_user.password_hash != 'FlaskIsAwesome'
     assert new_user.check_password('FlaskIsAwesome')
     assert not new_user.check_password('Another password')
+
+
+def test_user_as_string():
+    username = 'robot'
+    new_user = User(
+        username=username,
+        email='robot@gmail.com')
+    assert username in str(new_user)
+
+
+def test_post_as_string():
+    title = "First post"
+    new_post = Post(title=title)
+    assert title in str(new_post)
