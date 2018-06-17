@@ -1,14 +1,15 @@
 import os
 import tempfile
 import pytest
+import config
 from app import app, db
 
 
 @pytest.fixture
 def client():
-    app.config['TESTING'] = True
-    # Because we will often be testing forms where tracking CSRF will be a pain,
-    # let's turn off validation during testing.
+    print("in conftest for unit tests")
+    app.config.from_object(config.Config)
+    app.config.from_envvar('WOLFIT_SETTINGS')
     app.config['WTF_CSRF_ENABLED'] = False
     client = app.test_client()
     db.session.close()

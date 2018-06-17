@@ -1,24 +1,14 @@
-import os
-from dotenv import load_dotenv
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-
 class Config(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-    if os.environ.get('DB_HOST'):
-        SQLALCHEMY_DATABASE_URI = (
-            f"""mysql+pymysql://{os.environ.get('DB_USERNAME')}:"""
-            f"""{os.environ.get('DB_PASSWORD')}@"""
-            f"""{os.environ.get('DB_HOST')}/"""
-            f"""{os.environ.get('BLOG_DATABASE_NAME')}"""
-        )
-    else:
-        load_dotenv(verbose=True, dotenv_path="test.env")
-        SQLALCHEMY_DATABASE_URI = (
-            f"""mysql+pymysql://{os.environ.get('DB_USERNAME')}:"""
-            f"""{os.environ.get('DB_PASSWORD')}@"""
-            f"""{os.environ.get('DB_HOST')}/"""
-            f"""{os.environ.get('BLOG_DATABASE_NAME')}"""
+
+    @classmethod
+    def DATABASE_URI(cls, app):
+        return (
+            f"""mysql+pymysql://{app.config['DB_USERNAME']}:"""
+            f"""{app.config['DB_PASSWORD']}@"""
+            f"""{app.config['DB_HOST']}/"""
+            f"""{app.config['BLOG_DATABASE_NAME']}"""
         )
 
+    DEBUG = False
+    TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False

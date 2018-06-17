@@ -10,7 +10,6 @@ from flask_testing import LiveServerTestCase
 class IntegrationTest(LiveServerTestCase):
 
     def create_app(self):
-        app.config['TESTING'] = True
         self.client = app.test_client()
         db.session.close()
         db.drop_all()
