@@ -1,7 +1,7 @@
 
 ## Steps to make this work in your local environment
 
-* Create your own .env file (do not check this into Git). It will contain:
+* Create your own dev.settings and test.settings files (do not check these into Git). Each will contain:
 
 ``` py
 SECRET_KEY = "your generated secret key"

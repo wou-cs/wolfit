@@ -7,7 +7,6 @@ from app import app, db
 
 @pytest.fixture
 def client():
-    print("in conftest for unit tests")
     app.config.from_object(config.Config)
     app.config.from_envvar('WOLFIT_SETTINGS')
     app.config['WTF_CSRF_ENABLED'] = False

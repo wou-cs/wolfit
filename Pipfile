@@ -14,8 +14,8 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-login = "*"
 selenium = "*"
-flask-testing = "*"
 coverage = "*"
+flask-testing = "*"
 
 [dev-packages]
 
