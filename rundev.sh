@@ -1,3 +1,3 @@
 #!/bin/bash
-export WOLFIT_SETTINGS=/Users/chris/Dropbox/Briefcase/dev/cs-407/wolfit/dev.settings
+export WOLFIT_SETTINGS=$(pwd)/dev.settings
 flask run
