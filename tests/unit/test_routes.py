@@ -126,3 +126,10 @@ def test_register_should_create_a_new_user(client):
     assert response.status_code == 200
     u = db.session.query(User).filter_by(username='john').one()
     assert u.email == "john@beatles.com"
+
+
+def test_user_should_have_a_profile_page(client, test_user):
+    login(client, test_user.username, 'yoko')
+    response = client.get(url_for('user', username=test_user.username))
+    assert response.status_code == 200
+    assert test_user.username.encode() in response.data

@@ -8,14 +8,16 @@
         {% endif %}
     </head>
     <body>
-        <div>
-            Wolfit:
-            <a href="/index">Home</a>
+        <div id="header">
+            Wolfit
+            <ul>
+            <li class="nav" id="nav-home"><a href="/index">Home</a></li>
             {% if current_user.is_anonymous %}
-                <a href="{{ url_for('login') }}">Login</a>
+                <li class="nav" id="nav-login"><a href="{{ url_for('login') }}">Login</a></li>
             {% else %}
-                <a href="{{ url_for('logout') }}">Logout</a>
+                <li class="nav" id="nav-logout"><a href="{{ url_for('logout') }}">Logout</a></li>
             {% endif %}
+            </ul>
         </div>
         <hr>
         {% with messages = get_flashed_messages() %}
