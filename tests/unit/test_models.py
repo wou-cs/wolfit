@@ -1,5 +1,6 @@
 from app.models import User, Post
 
+
 def test_new_user():
     """
     GIVEN a User model

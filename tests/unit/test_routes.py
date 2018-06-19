@@ -1,6 +1,6 @@
 import pytest
 from flask import url_for
-from app import db
+from app import app, db
 from app.models import User, Post
 
 
@@ -23,20 +23,20 @@ def single_post():
 
 
 def login(client, username, password):
-    return client.post('/login', data=dict(
+    return client.post(url_for('login'), data=dict(
         username=username,
         password=password
     ), follow_redirects=True)
 
 
 def logout(client):
-    return client.get('/logout', follow_redirects=True)
+    return client.get(url_for('logout'), follow_redirects=True)
 
 
 def test_no_posts_no_user(client):
     """Start with a blank database."""
 
-    response = client.get('/')
+    response = client.get(url_for('index'))
     assert b'No entries' in response.data
     assert b'Anonymous' in response.data
 
@@ -72,33 +72,57 @@ def test_should_see_single_post(client, single_post):
     When an anonymous user visits the site
     Then the user should see the post headline
     """
-    response = client.get('/')
+    response = client.get(url_for('index'))
     assert b'First post' in response.data
     assert b'Anonymous' in response.data
 
 
 def test_should_see_login_form_when_not_logged_in(client, single_post):
-    response = client.get('/login')
+    response = client.get(url_for('login'))
     assert b'Sign In' in response.data
     assert b'Username' in response.data
 
 
 def test_user_should_be_redirected_to_index_if_logged_in(client, test_user):
     login(client, test_user.username, 'yoko')
-    response = client.get('/login')
+    response = client.get(url_for('login'))
     assert response.status_code == 302
     assert "/index" in response.headers["Location"]
 
 
 def test_bad_password_should_be_redirected_to_login(client, test_user):
-    response = client.post('/login', data=dict(
+    response = client.post(url_for('login'), data=dict(
         username=test_user.username,
         password="paul",
     ), follow_redirects=False)
     assert response.status_code == 302
     assert "/login" in response.headers["Location"]
 
+
 def test_empty_post_should_be_redirected_to_login(client, test_user):
-    response = client.post('/login', follow_redirects=False)
+    response = client.post(url_for('login'), follow_redirects=False)
     assert response.status_code == 302
     assert "/login" in response.headers["Location"]
+
+
+def test_there_should_be_a_place_for_new_users_to_register(client):
+    response = client.post(url_for('register'))
+    assert response.status_code == 200
+    assert b'Register' in response.data
+
+
+def test_should_be_a_link_to_register_if_not_logged_in(client):
+    response = client.get(url_for('login'))
+    assert b'Register' in response.data
+
+
+def test_register_should_create_a_new_user(client):
+    response = client.post(url_for('register'), data=dict(
+        username="john",
+        email="john@beatles.com",
+        password="yoko",
+        password2="yoko",
+    ), follow_redirects=True)
+    assert response.status_code == 200
+    u = db.session.query(User).filter_by(username='john').one()
+    assert u.email == "john@beatles.com"

@@ -1,0 +1,6 @@
+SECRET_KEY="your-secret-key"
+DB_HOST = 'localhost'
+BLOG_DATABASE_NAME = 'wolfit_test'
+DB_USERNAME = 'wolfit-test'
+DB_PASSWORD = 'make it count!'
+SERVER_NAME = 'test.localhost'
