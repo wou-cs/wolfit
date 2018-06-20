@@ -2,35 +2,18 @@ import pytest
 import time
 from flask import url_for
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import WebDriverException
 from app import app, db
 from app.models import User, Post
+from test_live_server import TestLiveServer
 
 PASSWORD = "yoko"
-MAX_WAIT = 10
 
 
-class TestLoggedInUser(object):
-    @pytest.fixture(autouse=True)
-    def execute(self, client):
-        client.begin()
-        yield
-        client.end()
-
-    def wait_for_element(self, client, id, text):
-        start_time = time.time()
-        while True:
-            try:
-                element = client.browser.find_element_by_id(id).text
-                assert text in element
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.25)
+class TestLoggedInUser(TestLiveServer):
 
     def test_login(self, client, test_user):
         client.browser.get(client.get_server_url())
+        self.wait_for_element(client, "nav-login", "Login")
         login_link = client.browser.find_element_by_id("nav-login-link")
         login_link.click()
         self.wait_for_element(client, "page-title", "Login")
