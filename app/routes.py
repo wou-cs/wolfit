@@ -5,6 +5,13 @@ from app.models import User, Post
 from app.forms import LoginForm, RegistrationForm
 
 
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -31,7 +38,7 @@ def login():
     elif form.is_submitted():
         return redirect(url_for('login'))
     else:
-        return render_template('login.html', title='Sign In', form=form)
+        return render_template('login.html', title='Login', form=form)
 
 
 @app.route('/logout')
@@ -64,3 +71,9 @@ def user(username):
         {'author': user, 'body': 'Test post #2'}
     ]
     return render_template('user.html', user=user, posts=posts)
+
+
+@app.route('/shutdown', methods=['GET'])
+def shutdown():
+    shutdown_server()
+    return 'Server shutting down...'

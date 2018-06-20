@@ -9,11 +9,11 @@
     </head>
     <body>
         <div id="header">
-            Wolfit
+            <span id="page-title">Wolfit - {{ title }}</span>
             <ul>
             <li class="nav" id="nav-home"><a href="/index">Home</a></li>
             {% if current_user.is_anonymous %}
-                <li class="nav" id="nav-login"><a href="{{ url_for('login') }}">Login</a></li>
+                <li class="nav" id="nav-login"><a href="{{ url_for('login') }}" id="nav-login-link">Login</a></li>
             {% else %}
                 <li class="nav" id="nav-logout"><a href="{{ url_for('logout') }}">Logout</a></li>
             {% endif %}
