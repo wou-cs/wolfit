@@ -5,3 +5,4 @@ test.env
 /.pytest_cache/
 .coverage
 /htmlcov/
+praw.ini

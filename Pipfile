@@ -16,6 +16,7 @@ flask-login = "*"
 selenium = "*"
 coverage = "*"
 flask-testing = "*"
+praw = "*"
 
 [dev-packages]
 
