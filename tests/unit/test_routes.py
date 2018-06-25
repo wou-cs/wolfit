@@ -115,3 +115,14 @@ def test_user_should_have_a_profile_page(client, test_user):
     response = client.get(url_for('user', username=test_user.username))
     assert response.status_code == 200
     assert test_user.username.encode() in response.data
+
+
+def test_user_should_have_nav_link_to_profile(client, test_user):
+    response = login(client, test_user.username, 'yoko')
+    assert b'Profile' in response.data
+
+
+def test_profile_should_show_posts_for_that_user(client, test_user, single_post):
+    login(client, test_user.username, 'yoko')
+    response = client.get(url_for('user', username=test_user.username))
+    assert single_post.title.encode() in response.data
