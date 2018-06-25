@@ -70,6 +70,12 @@ def user(username):
     return render_template('user.html', title='Profile', user=user, posts=posts)
 
 
+@app.route('/post/<id>')
+def post(id):
+    post = Post.query.filter_by(id=id).first_or_404()
+    return render_template('post.html', title=post.title, post=post)
+
+
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
     shutdown_server()

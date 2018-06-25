@@ -17,6 +17,7 @@ selenium = "*"
 coverage = "*"
 flask-testing = "*"
 praw = "*"
+markdown = "*"
 
 [dev-packages]
 

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Post: {{ post.title }}</h1>
+    <div class="user-timestamp">
+      <a href="{{ url_for('user', username=post.author.username) }}" id="author-link">{{ post.author.username }}</a> on {{ post.timestamp}}
+    </div>
+    <p>
+      {{ post.body_as_html()|safe }}
+    </p>
+{% endblock %}

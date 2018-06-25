@@ -1,6 +1,7 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+import markdown
 from app import db, login
 
 
@@ -30,6 +31,9 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.title)
+
+    def body_as_html(self):
+        return markdown.markdown(self.body)
 
 
 @login.user_loader

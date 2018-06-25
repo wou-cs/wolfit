@@ -10,7 +10,6 @@ PASSWORD = "yoko"
 
 
 class TestLoggedInUser(TestLiveServer):
-
     def test_login_and_profile_access(self, client, test_user):
         client.browser.get(client.get_server_url())
         self.wait_for_element(client, "nav-login", "Login")
@@ -20,7 +19,7 @@ class TestLoggedInUser(TestLiveServer):
         login_name = client.browser.find_element_by_id("username")
         login_name.send_keys(test_user.username)
         password = client.browser.find_element_by_id("password")
-        password.send_keys('yoko')
+        password.send_keys("yoko")
         password.send_keys(Keys.ENTER)
         self.wait_for_element(client, "user-greeting", test_user.username)
         profile_link = client.browser.find_element_by_id("nav-profile-link")

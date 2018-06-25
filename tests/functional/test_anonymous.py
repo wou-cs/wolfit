@@ -6,7 +6,6 @@ from test_live_server import TestLiveServer
 
 
 class TestAnonymousUser(TestLiveServer):
-
     def test_no_posts_no_user(self, client):
         client.browser.get(client.get_server_url())
         self.wait_for_element(client, "page-title", "Wolfit")
@@ -25,3 +24,12 @@ class TestAnonymousUser(TestLiveServer):
             ".//a"
         )
         assert "login" in nav.get_attribute("href")
+
+    def test_single_post_should_have_link_back_to_author(self, client, single_post):
+        client.browser.get(client.get_server_url())
+        self.wait_for_element(client, "page-title", "Wolfit")
+        post_link = client.browser.find_element_by_id("post-0-link")
+        post_link.click()
+        self.wait_for_element(client, "page-title", single_post.title)
+        author_link = client.browser.find_element_by_id("author-link")
+        assert single_post.author.username in author_link.text
