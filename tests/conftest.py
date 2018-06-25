@@ -34,8 +34,8 @@ def random_post():
     u.set_password('rando')
     db.session.add(u)
     db.session.commit()
-    p = Post(title=f"Random post #{randint(0, 999999)}", 
-             body="Something very random", 
+    p = Post(title=f"Random post #{randint(0, 999999)}",
+             body="Something very random",
              user_id=u.id)
     db.session.add(p)
     db.session.commit()
