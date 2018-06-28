@@ -1,7 +1,10 @@
 import pytest
+from datetime import datetime, timedelta
 from flask import url_for
 from app import app, db
 from app.models import User, Post
+
+PASSWORD = "yoko"
 
 
 def login(client, username, password):
@@ -30,7 +33,7 @@ def test_no_posts_logged_in_user(client, test_user):
     When the user logs in
     Then they should be greeted in person but see no posts
     """
-    response = login(client, test_user.username, "yoko")
+    response = login(client, test_user.username, PASSWORD)
     assert response.status_code == 200
     assert b"No entries" in response.data
     assert b"john" in response.data
@@ -42,7 +45,7 @@ def test_should_be_anon_after_logout(client, test_user):
     When the user logs in then logs out
     Then the site should greet them as anonymous
     """
-    response = login(client, test_user.username, "yoko")
+    response = login(client, test_user.username, PASSWORD)
     assert response.status_code == 200
     assert b"john" in response.data
     response = logout(client)
@@ -67,7 +70,7 @@ def test_should_see_login_form_when_not_logged_in(client, single_post):
 
 
 def test_user_should_be_redirected_to_index_if_logged_in(client, test_user):
-    login(client, test_user.username, "yoko")
+    login(client, test_user.username, PASSWORD)
     response = client.get(url_for("login"))
     assert response.status_code == 302
     assert "/index" in response.headers["Location"]
@@ -104,7 +107,7 @@ def test_register_should_create_a_new_user(client):
     response = client.post(
         url_for("register"),
         data=dict(
-            username="john", email="john@beatles.com", password="yoko", password2="yoko"
+            username="john", email="john@beatles.com", password=PASSWORD, password2=PASSWORD
         ),
         follow_redirects=True,
     )
@@ -114,25 +117,46 @@ def test_register_should_create_a_new_user(client):
 
 
 def test_user_should_have_a_profile_page(client, test_user):
-    login(client, test_user.username, "yoko")
+    login(client, test_user.username, PASSWORD)
     response = client.get(url_for("user", username=test_user.username))
     assert response.status_code == 200
     assert test_user.username.encode() in response.data
 
 
 def test_user_should_have_nav_link_to_profile(client, test_user):
-    response = login(client, test_user.username, "yoko")
+    response = login(client, test_user.username, PASSWORD)
     assert b"Profile" in response.data
 
 
 def test_profile_should_show_posts_for_that_user(
     client, test_user, single_post, random_post
 ):
-    login(client, test_user.username, "yoko")
+    login(client, test_user.username, PASSWORD)
     response = client.get(url_for("user", username=test_user.username))
     assert single_post.title.encode() in response.data
     assert random_post.title.encode() not in response.data
     assert url_for("post", id=single_post.id, _external=False).encode() in response.data
+
+
+def test_profile_should_indicate_when_user_was_last_seen(client, test_user):
+    login(client, test_user.username, PASSWORD)
+    response = client.get(url_for("user", username=test_user.username))
+    assert b"Last seen" in response.data
+    # And since we just logged in, it should reflect today
+    assert datetime.utcnow().strftime("%Y-%m-%d").encode() in response.data
+
+
+def test_last_seen_should_update_automatically_when_login(client, test_user):
+    # Load the user up and force the last seen info to last week
+    test_user.last_seen = test_user.last_seen - timedelta(days=7)
+    db.session.add(test_user)
+    db.session.commit()
+
+    login(client, test_user.username, PASSWORD)
+    response = client.get(url_for("user", username=test_user.username))
+    assert b"Last seen" in response.data
+    # And since we just logged in, it should reflect today
+    assert datetime.utcnow().strftime("%Y-%m-%d").encode() in response.data
 
 
 def test_index_with_posts_should_have_links_to_details(client, single_post):
