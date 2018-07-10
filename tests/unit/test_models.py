@@ -1,4 +1,6 @@
+from datetime import timedelta
 from app.models import User, Post
+from app import db
 
 
 def test_new_user():
@@ -37,3 +39,14 @@ def test_post_body_markdown_render():
     new_post = Post(title="Foo", body=body)
     assert "<ul>" in new_post.body_as_html()
     assert "<a href=" in new_post.body_as_html()
+
+
+def test_recent_posts_should_be_ordered(client, test_user, single_post):
+    single_post.timestamp = single_post.timestamp - timedelta(days=1)
+    db.session.add(single_post)
+    db.session.commit()
+    p = Post(title="Recent post", body="More current", user_id=test_user.id)
+    db.session.add(p)
+    db.session.commit()
+    assert p.title == Post.recent_posts()[0].title
+    assert single_post.title == Post.recent_posts()[-1].title

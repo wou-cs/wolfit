@@ -1,4 +1,5 @@
 import pytest
+from datetime import timedelta
 from flask import url_for
 from app import app, db
 from app.models import User, Post
@@ -33,3 +34,18 @@ class TestAnonymousUser(TestLiveServer):
         self.wait_for_element(client, "page-title", single_post.title)
         author_link = client.browser.find_element_by_id("author-link")
         assert single_post.author.username in author_link.text
+
+    def test_posts_should_be_ordered_most_recent_first(
+        self, client, test_user, single_post
+    ):
+        single_post.timestamp = single_post.timestamp - timedelta(days=1)
+        db.session.add(single_post)
+        db.session.commit()
+
+        p = Post(title="Recent post", body="More current", user_id=test_user.id)
+        db.session.add(p)
+        db.session.commit()
+        client.browser.get(client.get_server_url())
+        self.wait_for_element(client, "page-title", "Wolfit")
+        recent_post_link = client.browser.find_element_by_id("post-0-link")
+        assert p.title in recent_post_link.text

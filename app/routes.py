@@ -23,7 +23,7 @@ def shutdown_server():
 @app.route('/')
 @app.route('/index')
 def index():
-    posts = Post.query.all()
+    posts = Post.recent_posts()
     greeting_name = 'Anonymous'
     if current_user.is_authenticated:
         greeting_name = current_user.username

@@ -33,6 +33,10 @@ class Post(db.Model):
     def __repr__(self):
         return '<Post {}>'.format(self.title)
 
+    @classmethod
+    def recent_posts(cls):
+        return cls.query.order_by(Post.timestamp.desc()).all()
+
     def body_as_html(self):
         return markdown.markdown(self.body)
 
