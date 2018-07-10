@@ -3,7 +3,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from datetime import datetime
 from app import app, db
 from app.models import User, Post
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, PostForm
 
 
 @app.before_request
@@ -53,6 +53,23 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/create_post', methods=['GET', 'POST'])
+def create_post():
+    if not current_user.is_authenticated:
+        return redirect(url_for('register'))
+
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data,
+                    body=form.body.data,
+                    author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return redirect(url_for('index'))
+    return render_template('create_post.html', title='Create Post', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
