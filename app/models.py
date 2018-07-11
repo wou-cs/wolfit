@@ -35,7 +35,7 @@ class Post(db.Model):
 
     @classmethod
     def recent_posts(cls):
-        return cls.query.order_by(Post.timestamp.desc()).all()
+        return cls.query.order_by(Post.timestamp.desc())
 
     def body_as_html(self):
         return markdown.markdown(self.body)

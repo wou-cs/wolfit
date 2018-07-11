@@ -39,6 +39,13 @@ def test_no_posts_logged_in_user(client, test_user):
     assert b"john" in response.data
 
 
+def test_index_should_have_link_to_more_when_beyond_post_limit(
+    client, many_random_posts
+):
+    response = client.get(url_for("index"))
+    assert b"Older posts" in response.data
+
+
 def test_should_be_anon_after_logout(client, test_user):
     """
     Given a new system with just a registered user
@@ -61,6 +68,7 @@ def test_should_see_single_post(client, single_post):
     response = client.get(url_for("index"))
     assert b"First post" in response.data
     assert b"Anonymous" in response.data
+    assert b"Older posts" not in response.data
 
 
 def test_should_see_login_form_when_not_logged_in(client, single_post):

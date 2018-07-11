@@ -23,12 +23,22 @@ def shutdown_server():
 @app.route('/')
 @app.route('/index')
 def index():
-    posts = Post.recent_posts()
+    page = request.args.get('page', 1, type=int)
+    posts = Post.recent_posts().paginate(
+        page, app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('index', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) \
+        if posts.has_prev else None
     greeting_name = 'Anonymous'
     if current_user.is_authenticated:
         greeting_name = current_user.username
 
-    return render_template('index.html', greeting_name=greeting_name, posts=posts)
+    return render_template('index.html',
+                           greeting_name=greeting_name,
+                           posts=posts.items,
+                           next_url=next_url,
+                           prev_url=prev_url)
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -40,3 +40,9 @@ def random_post():
     db.session.add(p)
     db.session.commit()
     return p
+
+
+@pytest.fixture
+def many_random_posts():
+    for _ in range(100):
+        random_post()
