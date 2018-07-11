@@ -1,3 +1,4 @@
+import textwrap
 from datetime import timedelta
 from app.models import User, Post
 from app import db
@@ -31,11 +32,12 @@ def test_post_as_string():
 
 
 def test_post_body_markdown_render():
-    body = ("Start of the body\n"
-            "\n"
-            "* Bullet 1\n"
-            "* [Bullet 2](http://example.com)\n"
-            "\n")
+    body = textwrap.dedent("""\
+        Start of the body
+
+        * Bullet 1
+        * [Bullet 2](http://example.com)
+    """)
     new_post = Post(title="Foo", body=body)
     assert "<ul>" in new_post.body_as_html()
     assert "<a href=" in new_post.body_as_html()
