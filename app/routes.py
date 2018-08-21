@@ -128,6 +128,26 @@ def post(id):
                            post=post)
 
 
+@app.route('/up_vote/<id>')
+def up_vote(id):
+    post = Post.query.filter_by(id=id).first_or_404()
+    post.up_vote()
+    return render_template('post.html',
+                           greeting_name=greeting_name(),
+                           title=post.title,
+                           post=post)
+
+
+@app.route('/down_vote/<id>')
+def down_vote(id):
+    post = Post.query.filter_by(id=id).first_or_404()
+    post.down_vote()
+    return render_template('post.html',
+                           greeting_name=greeting_name(),
+                           title=post.title,
+                           post=post)
+
+
 @app.route('/shutdown', methods=['GET'])
 def shutdown():
     shutdown_server()

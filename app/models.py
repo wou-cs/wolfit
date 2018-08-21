@@ -77,6 +77,7 @@ class Post(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    vote_count = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return '<Post {}>'.format(self.title)
@@ -90,6 +91,19 @@ class Post(db.Model):
 
     def pretty_timestamp(self):
         return pretty_date(self.timestamp)
+
+    def adjust_vote(self, amount):
+        if self.vote_count is None:
+            self.vote_count = 0
+        self.vote_count += amount
+        db.session.add(self)
+        db.session.commit()
+
+    def up_vote(self):
+        self.adjust_vote(1)
+
+    def down_vote(self):
+        self.adjust_vote(-1)
 
 
 @login.user_loader

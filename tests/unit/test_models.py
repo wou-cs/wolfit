@@ -52,3 +52,16 @@ def test_recent_posts_should_be_ordered(client, test_user, single_post):
     db.session.commit()
     assert p.title == Post.recent_posts()[0].title
     assert single_post.title == Post.recent_posts()[-1].title
+
+
+def test_posts_should_have_a_vote_count():
+    p = Post(title="New post", body="Not interesting", vote_count=0)
+    assert p.vote_count == 0
+
+
+def test_post_vote_count_goes_up_and_down_after_voting(client, test_user, single_post):
+    assert single_post.vote_count == 0
+    single_post.up_vote()
+    assert single_post.vote_count == 1
+    single_post.down_vote()
+    assert single_post.vote_count == 0

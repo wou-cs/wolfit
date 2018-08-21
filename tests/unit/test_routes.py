@@ -169,3 +169,13 @@ def test_post_should_have_detail_page_with_body(client, single_post):
 def test_home_page_should_have_a_link_to_create_a_new_post(client, test_user):
     response = login(client, test_user.username, PASSWORD)
     assert b"Create Post" in response.data
+
+
+def test_single_post_should_have_link_to_voting(client, test_user, single_post):
+    response = client.get(url_for("index"))
+    assert url_for("up_vote",
+                   id=single_post.id,
+                   _external=False).encode() in response.data
+    assert url_for("down_vote",
+                   id=single_post.id,
+                   _external=False).encode() in response.data

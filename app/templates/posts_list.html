@@ -6,7 +6,7 @@
   {% for post in posts.items %}
   <tr class="post-row">
     <td>
-      {{ voting(post) }}
+      {{ voting(post, loop.index0) }}
     </td>
     <td>
       <div class="post-title"><a href="{{ url_for("post", id=post.id) }}" id="post-{{ loop.index0 }}-link">{{ post.title }}</a></div>
