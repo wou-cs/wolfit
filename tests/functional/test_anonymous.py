@@ -9,14 +9,14 @@ from test_live_server import TestLiveServer
 class TestAnonymousUser(TestLiveServer):
     def test_no_posts_no_user(self, client):
         client.browser.get(client.get_server_url())
-        self.wait_for_element(client, "page-title", "Wolfit")
+        self.wait_for_element(client, "nav-main", "Wolfit")
         assert "Wolfit" in client.browser.title
         greeting = client.browser.find_element_by_id("nav-login-link").text
         assert "Login" in greeting
 
     def test_navigation_when_not_logged_in(self, client):
         client.browser.get(client.get_server_url())
-        self.wait_for_element(client, "page-title", "Wolfit")
+        self.wait_for_element(client, "nav-main", "Wolfit")
         nav = client.browser.find_element_by_id("nav-home").find_element_by_xpath(
             ".//a"
         )
@@ -46,6 +46,6 @@ class TestAnonymousUser(TestLiveServer):
         db.session.add(p)
         db.session.commit()
         client.browser.get(client.get_server_url())
-        self.wait_for_element(client, "page-title", "Wolfit")
+        self.wait_for_element(client, "nav-main", "Wolfit")
         recent_post_link = client.browser.find_element_by_id("post-0-link")
         assert p.title in recent_post_link.text

@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-  
-  <h1 id="page-title" >Wolfit</h1>
   <p><a href="{{ url_for('create_post') }}" id="create-post-link">Create Post</a></p>
   {% include 'posts_list.html' %}  
 {% endblock %}
