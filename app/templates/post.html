@@ -1,11 +1,19 @@
 {% extends "base.html" %}
+{% from "macros.html" import post_meta, voting with context %}
+{% block app_content %}
 
-{% block content %}
-    <h1>Post: {{ post.title }}</h1>
-    <div class="user-timestamp">
-      Posted by <a href="{{ url_for('user', username=post.author.username) }}" id="author-link">{{ post.author.username }}</a> {{ post.pretty_timestamp() }}
-    </div>
-    <p>
-      {{ post.body_as_html()|safe }}
-    </p>
+<table class="table table-bordered">
+  <tr class="post-row">
+    <td>
+      {{ voting(post) }}
+    </td>
+    <td>
+      {{ post_meta(post) }}
+      <h1 id="post-title">{{ post.title }}</h1>
+      <div>
+        {{ post.body_as_html()|safe }}
+      </div>
+    </td>
+  </tr>
+</table>
 {% endblock %}

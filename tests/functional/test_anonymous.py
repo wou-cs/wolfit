@@ -11,8 +11,8 @@ class TestAnonymousUser(TestLiveServer):
         client.browser.get(client.get_server_url())
         self.wait_for_element(client, "page-title", "Wolfit")
         assert "Wolfit" in client.browser.title
-        greeting = client.browser.find_element_by_id("user-greeting").text
-        assert "Anonymous" in greeting
+        greeting = client.browser.find_element_by_id("nav-login-link").text
+        assert "Login" in greeting
 
     def test_navigation_when_not_logged_in(self, client):
         client.browser.get(client.get_server_url())
@@ -28,10 +28,10 @@ class TestAnonymousUser(TestLiveServer):
 
     def test_single_post_should_have_link_back_to_author(self, client, single_post):
         client.browser.get(client.get_server_url())
-        self.wait_for_element(client, "page-title", "Wolfit")
+        self.wait_for_element(client, "post-0-link", single_post.title)
         post_link = client.browser.find_element_by_id("post-0-link")
         post_link.click()
-        self.wait_for_element(client, "page-title", single_post.title)
+        self.wait_for_element(client, "post-title", single_post.title)
         author_link = client.browser.find_element_by_id("author-link")
         assert single_post.author.username in author_link.text
 

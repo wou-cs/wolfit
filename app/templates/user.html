@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block app_content %}
   <h1>Profile for User: {{ user.username }}</h1>
   {% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}
   <hr>

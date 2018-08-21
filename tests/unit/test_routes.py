@@ -24,7 +24,6 @@ def test_no_posts_no_user(client):
 
     response = client.get(url_for("index"))
     assert b"No entries" in response.data
-    assert b"Anonymous" in response.data
 
 
 def test_no_posts_logged_in_user(client, test_user):
@@ -43,7 +42,7 @@ def test_index_should_have_link_to_more_when_beyond_post_limit(
     client, many_random_posts
 ):
     response = client.get(url_for("index"))
-    assert b"Older posts" in response.data
+    assert b"index?page=2" in response.data
 
 
 def test_should_be_anon_after_logout(client, test_user):
@@ -56,7 +55,7 @@ def test_should_be_anon_after_logout(client, test_user):
     assert response.status_code == 200
     assert b"john" in response.data
     response = logout(client)
-    assert b"Anonymous" in response.data
+    assert b"Login" in response.data
 
 
 def test_should_see_single_post(client, single_post):
@@ -67,7 +66,7 @@ def test_should_see_single_post(client, single_post):
     """
     response = client.get(url_for("index"))
     assert b"First post" in response.data
-    assert b"Anonymous" in response.data
+    assert b"Login" in response.data
     assert b"Older posts" not in response.data
 
 
@@ -132,11 +131,6 @@ def test_user_should_have_a_profile_page(client, test_user):
     response = client.get(url_for("user", username=test_user.username))
     assert response.status_code == 200
     assert test_user.username.encode() in response.data
-
-
-def test_user_should_have_nav_link_to_profile(client, test_user):
-    response = login(client, test_user.username, PASSWORD)
-    assert b"Profile" in response.data
 
 
 def test_profile_should_show_posts_for_that_user(

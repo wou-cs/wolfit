@@ -1,35 +1,39 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        {% if title %}
-        <title>{{ title }} - Wolfit</title>
-        {% else %}
-        <title>Wolfit</title>
-        {% endif %}
-    </head>
-    <body>
-        <div id="header">
-            <span id="page-title">Wolfit - {{ title }}</span>
-            <ul>
-            <li class="nav" id="nav-home"><a href="/index">Home</a></li>
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}{{ title }} - Wolfit{% else %}Welcome to Wolfit{% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div id="header" class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/index">Wolfit</a>
+            </div>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="nav" id="nav-home"><a href="/index">Home</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
             {% if current_user.is_anonymous %}
                 <li class="nav" id="nav-login"><a href="{{ url_for('login') }}" id="nav-login-link">Login</a></li>
             {% else %}
-                <li class="nav" id="nav-profile"><a href="{{ url_for('user', username=current_user.username) }}" id="nav-profile-link">Profile</a></li>
                 <li class="nav" id="nav-logout"><a href="{{ url_for('logout') }}">Logout</a></li>
+                <li class="nav" id="nav-profile"><a href="{{ url_for('user', username=current_user.username) }}" id="user-greeting">{{ greeting_name }}</a></li>
             {% endif %}
             </ul>
         </div>
-        <hr>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-info" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
         {% endwith %}
-        {% block content %}{% endblock %}
-    </body>
-</html>
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}

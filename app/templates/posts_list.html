@@ -1,17 +1,23 @@
-{% if posts %}
-  {% for post in posts %}
-  <div class="post">
-    <h2><a href="{{ url_for("post", id=post.id) }}" id="post-{{ loop.index0 }}-link">{{ post.title }}</a></h2>
-    <p>Posted by {{ post.author.username }} {{ post.pretty_timestamp() }} ({{ post.timestamp }} UTC)</p>
-  </div>
+{% from "bootstrap/pagination.html" import render_pagination %}
+{% from "macros.html" import post_meta, voting with context %}
+
+{% if posts.items %}
+  <table class="table table-bordered">
+  {% for post in posts.items %}
+  <tr class="post-row">
+    <td>
+      {{ voting(post) }}
+    </td>
+    <td>
+      <div class="post-title"><a href="{{ url_for("post", id=post.id) }}" id="post-{{ loop.index0 }}-link">{{ post.title }}</a></div>
+      {{ post_meta(post) }}
+    </td>
+  </tr>
   {% endfor %}
+  </table>
 {% else %}
   <p>No entries.</p>
 {% endif %}
 
-{% if prev_url %}
-  <a href="{{ prev_url }}">Newer posts</a>
-{% endif %}
-{% if next_url %}
-  <a href="{{ next_url }}">Older posts</a>
-{% endif %}
+
+{{render_pagination(posts)}}

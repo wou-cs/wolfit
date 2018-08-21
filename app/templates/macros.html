@@ -1,0 +1,11 @@
+{% macro post_meta(post) %}
+  <div class="post-meta">Posted by <a href="{{ url_for('user', username=post.author.username) }}" id="author-link">{{ post.author.username }}</a> {{ post.pretty_timestamp() }}</div>
+{% endmacro %}
+
+{% macro voting(post) %}
+  <p class="text-center">
+    <span class="glyphicon glyphicon-arrow-up"></span><br/>
+    100<br/>
+    <span class="glyphicon glyphicon-arrow-down"></span>
+  </p>
+{% endmacro %}

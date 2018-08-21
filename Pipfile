@@ -18,6 +18,7 @@ coverage = "*"
 flask-testing = "*"
 praw = "*"
 markdown = "*"
+flask-bootstrap = "*"
 
 [dev-packages]
 

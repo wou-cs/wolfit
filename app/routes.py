@@ -6,6 +6,13 @@ from app.models import User, Post
 from app.forms import LoginForm, RegistrationForm, PostForm
 
 
+def greeting_name():
+    greeting_name = 'Anonymous'
+    if current_user.is_authenticated:
+        greeting_name = current_user.username
+    return greeting_name
+
+
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
@@ -26,19 +33,11 @@ def index():
     page = request.args.get('page', 1, type=int)
     posts = Post.recent_posts().paginate(
         page, app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('index', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('index', page=posts.prev_num) \
-        if posts.has_prev else None
-    greeting_name = 'Anonymous'
-    if current_user.is_authenticated:
-        greeting_name = current_user.username
 
     return render_template('index.html',
-                           greeting_name=greeting_name,
-                           posts=posts.items,
-                           next_url=next_url,
-                           prev_url=prev_url)
+                           title="The Front Page of WOU",
+                           greeting_name=greeting_name(),
+                           posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -56,7 +55,10 @@ def login():
     elif form.is_submitted():
         return redirect(url_for('login'))
     else:
-        return render_template('login.html', title='Login', form=form)
+        return render_template('login.html',
+                               greeting_name=greeting_name(),
+                               title='Login',
+                               form=form)
 
 
 @app.route('/logout')
@@ -79,7 +81,10 @@ def create_post():
         db.session.commit()
         flash('Your post is now live!')
         return redirect(url_for('index'))
-    return render_template('create_post.html', title='Create Post', form=form)
+    return render_template('create_post.html',
+                           greeting_name=greeting_name(),
+                           title='Create Post',
+                           form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -94,7 +99,10 @@ def register():
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html',
+                           greeting_name=greeting_name(),
+                           title='Register',
+                           form=form)
 
 
 @app.route('/user/<username>')
@@ -103,23 +111,21 @@ def user(username):
     page = request.args.get('page', 1, type=int)
     posts = user.posts.paginate(
         page, app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('index', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('index', page=posts.prev_num) \
-        if posts.has_prev else None
 
     return render_template('user.html',
+                           greeting_name=greeting_name(),
                            title='Profile',
                            user=user,
-                           posts=posts.items,
-                           next_url=next_url,
-                           prev_url=prev_url)
+                           posts=posts)
 
 
 @app.route('/post/<id>')
 def post(id):
     post = Post.query.filter_by(id=id).first_or_404()
-    return render_template('post.html', title=post.title, post=post)
+    return render_template('post.html',
+                           greeting_name=greeting_name(),
+                           title=post.title,
+                           post=post)
 
 
 @app.route('/shutdown', methods=['GET'])

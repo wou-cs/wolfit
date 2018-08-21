@@ -15,19 +15,13 @@ class TestLoggedInUser(TestLiveServer):
         self.wait_for_element(client, "nav-login", "Login")
         login_link = client.browser.find_element_by_id("nav-login-link")
         login_link.click()
-        self.wait_for_element(client, "page-title", "Login")
+        self.wait_for_element(client, "remember_me", "")
         login_name = client.browser.find_element_by_id("username")
         login_name.send_keys(test_user.username)
         password = client.browser.find_element_by_id("password")
         password.send_keys("yoko")
         password.send_keys(Keys.ENTER)
         self.wait_for_element(client, "user-greeting", test_user.username)
-
-    def test_login_and_profile_access(self, client, test_user):
-        self.login(client, test_user)
-        profile_link = client.browser.find_element_by_id("nav-profile-link")
-        profile_link.click()
-        self.wait_for_element(client, "page-title", "Profile")
 
     def test_create_new_post(self, client, test_user):
         body = ("Start of the body\n"
