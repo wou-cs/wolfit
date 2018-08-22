@@ -34,12 +34,14 @@ def test_post_as_string():
 
 
 def test_post_body_markdown_render():
-    body = textwrap.dedent("""\
+    body = textwrap.dedent(
+        """\
         Start of the body
 
         * Bullet 1
         * [Bullet 2](http://example.com)
-    """)
+    """
+    )
     new_post = Post(title="Foo", body=body)
     assert "<ul>" in new_post.body_as_html()
     assert "<a href=" in new_post.body_as_html()
@@ -61,7 +63,9 @@ def test_posts_should_have_a_vote_count():
     assert p.vote_count == 0
 
 
-def test_post_should_have_proper_status_for_user_when_new(client, test_user, single_post):
+def test_post_should_have_proper_status_for_user_when_new(
+    client, test_user, single_post
+):
     assert not single_post.already_voted(test_user)
 
 
