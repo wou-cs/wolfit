@@ -1,7 +1,9 @@
+import pytest
 import textwrap
 from datetime import timedelta
 from app.models import User, Post
 from app import db
+from sqlalchemy import exc
 
 
 def test_new_user():
@@ -59,9 +61,17 @@ def test_posts_should_have_a_vote_count():
     assert p.vote_count == 0
 
 
-def test_post_vote_count_goes_up_and_down_after_voting(client, test_user, single_post):
+def test_post_should_have_proper_status_for_user_when_new(client, test_user, single_post):
+    assert not single_post.already_voted(test_user)
+
+
+def test_post_vote_count_goes_up_after_voting(client, test_user, single_post):
     assert single_post.vote_count == 0
-    single_post.up_vote()
+    single_post.up_vote(test_user)
     assert single_post.vote_count == 1
-    single_post.down_vote()
-    assert single_post.vote_count == 0
+
+
+def test_a_user_can_only_vote_once(client, test_user, single_post):
+    single_post.up_vote(test_user)
+    single_post.up_vote(test_user)  # Should throw an exception
+    assert single_post.vote_count == 1

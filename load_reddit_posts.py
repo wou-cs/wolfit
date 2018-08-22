@@ -35,6 +35,7 @@ for submission in reddit.subreddit(subreddit).hot(limit=100):
         p = Post(title=submission.title,
                  body=submission.selftext,
                  timestamp=datetime.utcfromtimestamp(submission.created_utc),
+                 vote_count=0,
                  user_id=u.id)
         print(f"Creating post: {p}")
         db.session.add(p)

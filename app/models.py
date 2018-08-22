@@ -49,6 +49,13 @@ def pretty_date(time=False):
     return str(day_diff // 365) + " years ago"
 
 
+user_vote = db.Table(
+    'user_vote',
+    db.Column('user.id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('post.id', db.Integer, db.ForeignKey('post.id'), primary_key=True)
+)
+
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -60,6 +67,9 @@ class User(UserMixin, db.Model):
         backref='author',
         lazy='dynamic')
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    post_votes = db.relationship('Post',
+                                 secondary=user_vote,
+                                 back_populates='user_votes')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -78,6 +88,9 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     vote_count = db.Column(db.Integer, default=0)
+    user_votes = db.relationship('User',
+                                 secondary=user_vote,
+                                 back_populates='post_votes')
 
     def __repr__(self):
         return '<Post {}>'.format(self.title)
@@ -92,18 +105,28 @@ class Post(db.Model):
     def pretty_timestamp(self):
         return pretty_date(self.timestamp)
 
+    def already_voted(self, user):
+        return user in self.user_votes
+
     def adjust_vote(self, amount):
         if self.vote_count is None:
             self.vote_count = 0
         self.vote_count += amount
         db.session.add(self)
+
+    def up_vote(self, user):
+        if self.already_voted(user):
+            return
+        self.user_votes.append(user)
+        self.adjust_vote(1)
         db.session.commit()
 
-    def up_vote(self):
-        self.adjust_vote(1)
-
-    def down_vote(self):
+    def down_vote(self, user):
+        if self.already_voted(user):
+            return
+        self.user_votes.append(user)
         self.adjust_vote(-1)
+        db.session.commit()
 
 
 @login.user_loader
