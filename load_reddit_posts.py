@@ -1,6 +1,6 @@
 import praw
 from datetime import datetime
-from app.models import User, Post
+from app.models import User, Post, Category
 from app import app, db, config
 from random import randint
 import argparse
@@ -24,9 +24,20 @@ def create_user(subreddit):
     return u
 
 
+def create_category(subreddit):
+    category = None
+    category = Category.query.filter_by(title=subreddit).first()
+    if category is None:
+        category = Category(title=subreddit)
+        db.session.add(category)
+        db.session.commit()
+    return category
+
+
 reddit = praw.Reddit()
 
 u = create_user(subreddit)
+c = create_category(subreddit)
 
 for submission in reddit.subreddit(subreddit).hot(limit=100):
     # We may have already loaded this post, so check title
@@ -36,7 +47,8 @@ for submission in reddit.subreddit(subreddit).hot(limit=100):
                  body=submission.selftext,
                  timestamp=datetime.utcfromtimestamp(submission.created_utc),
                  vote_count=0,
-                 user_id=u.id)
-        print(f"Creating post: {p}")
+                 user_id=u.id,
+                 category_id=c.id)
+        print(f"Creating post: {p} in {c.title}")
         db.session.add(p)
         db.session.commit()

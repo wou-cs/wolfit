@@ -85,6 +85,7 @@ class Post(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
     vote_count = db.Column(db.Integer, default=0)
     user_votes = db.relationship(
         "User", secondary=user_vote, back_populates="post_votes"
@@ -125,6 +126,14 @@ class Post(db.Model):
         self.user_votes.append(user)
         self.adjust_vote(-1)
         db.session.commit()
+
+
+class Category(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64), index=True, unique=True)
+    posts = db.relationship(
+        "Post", order_by="desc(Post.timestamp)", backref="category", lazy="dynamic"
+    )
 
 
 @login.user_loader

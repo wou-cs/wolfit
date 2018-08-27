@@ -1,7 +1,7 @@
 import pytest
 import textwrap
 from datetime import timedelta
-from app.models import User, Post
+from app.models import User, Post, Category
 from app import db
 from sqlalchemy import exc
 
@@ -79,3 +79,22 @@ def test_a_user_can_only_vote_once(client, test_user, single_post):
     single_post.up_vote(test_user)
     single_post.up_vote(test_user)  # Should throw an exception
     assert single_post.vote_count == 1
+
+
+def test_posts_have_categories():
+    cat = Category(title="learnpython")
+    p = Post(title="Why indent?",
+             body="Would not semicolons work?",
+             category=cat)
+    assert p.category == cat
+
+
+def test_categories_have_posts(client, test_user, default_category, single_post):
+    second = Post(title="Second post",
+                  body="Something saucy",
+                  user_id=test_user.id,
+                  category_id=default_category.id)
+    db.session.add(second)
+    db.session.commit()
+    assert single_post in default_category.posts
+    assert second in default_category.posts

@@ -1,5 +1,5 @@
 {% macro post_meta(post) %}
-  <div class="post-meta">Posted by <a href="{{ url_for('user', username=post.author.username) }}" id="author-link">{{ post.author.username }}</a> {{ post.pretty_timestamp() }}</div>
+  <div class="post-meta"><a href="{{ url_for('category', title=post.category.title) }}" id="category-link">{{ post.category.title }}</a> • Posted by <a href="{{ url_for('user', username=post.author.username) }}" id="author-link">{{ post.author.username }}</a> {{ post.pretty_timestamp() }}</div>
 {% endmacro %}
 
 {% macro voting(post, index, source) %}

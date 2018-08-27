@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from datetime import datetime
 from app import app, db
-from app.models import User, Post
+from app.models import User, Post, Category
 from app.forms import LoginForm, RegistrationForm, PostForm
 
 
@@ -115,6 +115,21 @@ def user(username):
         greeting_name=greeting_name(),
         title="Profile",
         user=user,
+        posts=posts,
+    )
+
+
+@app.route("/w/<title>")
+def category(title):
+    category = Category.query.filter_by(title=title).first_or_404()
+    page = request.args.get("page", 1, type=int)
+    posts = category.posts.paginate(page, app.config["POSTS_PER_PAGE"], False)
+
+    return render_template(
+        "category.html",
+        greeting_name=greeting_name(),
+        title="Category",
+        category=title,
         posts=posts,
     )
 
