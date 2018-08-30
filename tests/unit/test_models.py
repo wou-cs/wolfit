@@ -1,7 +1,7 @@
 import pytest
 import textwrap
 from datetime import timedelta
-from app.models import User, Post, Category
+from app.models import User, Post, Category, Comment
 from app import db
 from sqlalchemy import exc
 
@@ -83,18 +83,41 @@ def test_a_user_can_only_vote_once(client, test_user, single_post):
 
 def test_posts_have_categories():
     cat = Category(title="learnpython")
-    p = Post(title="Why indent?",
-             body="Would not semicolons work?",
-             category=cat)
+    p = Post(title="Why indent?", body="Would not semicolons work?", category=cat)
     assert p.category == cat
 
 
 def test_categories_have_posts(client, test_user, default_category, single_post):
-    second = Post(title="Second post",
-                  body="Something saucy",
-                  user_id=test_user.id,
-                  category_id=default_category.id)
+    second = Post(
+        title="Second post",
+        body="Something saucy",
+        user_id=test_user.id,
+        category_id=default_category.id,
+    )
     db.session.add(second)
     db.session.commit()
     assert single_post in default_category.posts
     assert second in default_category.posts
+
+
+def test_posts_have_comments(client, test_user, single_post):
+    comment = Comment(body="Important insight!",
+                      user_id=test_user.id)
+    single_post.comments.append(comment)
+    db.session.commit()
+    assert comment in single_post.comments
+
+
+def test_comments_can_be_counted(client, test_user, single_post):
+    comment = Comment(body="Important insight!",
+                      user_id=test_user.id)
+    single_post.comments.append(comment)
+    db.session.commit()
+    comment2 = Comment(body="Later important insight!",
+                       user_id=test_user.id)
+    single_post.comments.append(comment2)
+    db.session.commit()
+    assert comment in single_post.comments
+    assert comment2 in single_post.comments
+    assert single_post.comment_count() == 2
+

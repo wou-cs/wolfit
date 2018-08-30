@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% from "macros.html" import post_meta, voting with context %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% from "macros.html" import post_meta, comment_meta, voting with context %}
 {% block app_content %}
 
 <table class="table table-bordered">
@@ -15,5 +16,38 @@
       </div>
     </td>
   </tr>
+  <tr class="new-comment-row">
+    <td>
+    </td>
+    <td>
+      {% if current_user.is_anonymous %}
+        <a href="{{ url_for('login') }}" id="nav-login-link">Login to Comment</a>
+      {% else %}
+        Comment as {{greeting_name}}
+        <div>
+          {{ wtf.quick_form(form) }}
+        </div>
+      {% endif %}
+    </td>
+  </tr>
+  <tr class="sort-row">
+    <td>
+    </td>
+    <td>
+      Comments, sorted by most recent
+    </td>
+  </tr>
+
+  {% for comment in comments %}
+  <tr class="comment-row">
+     <td>
+      ?
+    </td>
+    <td>
+      {{ comment_meta(comment) }}
+      <div class="comment" id="comment-{{ loop.index0 }}-link">{{ comment.body }}</a></div>
+    </td>
+  </tr>
+  {% endfor %}
 </table>
 {% endblock %}

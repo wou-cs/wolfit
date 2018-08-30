@@ -36,3 +36,9 @@ class PostForm(FlaskForm):
     body = TextAreaField('Text (optional)', validators=[
         Length(min=0, max=2800)])
     submit = SubmitField('Post')
+
+
+class CommentForm(FlaskForm):
+    body = TextAreaField('Thoughts?', validators=[
+        Length(min=0, max=2800)])
+    submit = SubmitField('Comment')

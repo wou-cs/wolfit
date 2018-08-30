@@ -2,8 +2,8 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from datetime import datetime
 from app import app, db
-from app.models import User, Post, Category
-from app.forms import LoginForm, RegistrationForm, PostForm
+from app.models import User, Post, Category, Comment
+from app.forms import LoginForm, RegistrationForm, PostForm, CommentForm
 
 
 def greeting_name():
@@ -134,11 +134,25 @@ def category(title):
     )
 
 
-@app.route("/post/<id>")
+@app.route("/post/<id>", methods=["GET", "POST"])
 def post(id):
     post = Post.query.filter_by(id=id).first_or_404()
+    form = CommentForm()
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            return redirect(url_for("login"))
+        comment = Comment(body=form.body.data, author=current_user)
+        post.comments.append(comment)
+        db.session.commit()
+        flash("Your comment is now live!")
+        return redirect(url_for("post", id=id))
     return render_template(
-        "post.html", greeting_name=greeting_name(), title=post.title, post=post
+        "post.html",
+        greeting_name=greeting_name(),
+        title=post.title,
+        post=post,
+        comments=post.comments,
+        form=form
     )
 
 

@@ -2,7 +2,7 @@ import pytest
 from datetime import datetime, timedelta
 from flask import url_for
 from app import app, db
-from app.models import User, Post
+from app.models import User, Post, Comment
 
 PASSWORD = "yoko"
 
@@ -189,3 +189,26 @@ def test_should_be_a_category_page_that_shows_posts(
     assert single_post.title.encode() in response.data
     assert random_post.title.encode() in response.data
     assert url_for("post", id=single_post.id, _external=False).encode() in response.data
+
+
+def test_comments_are_shown_after_post(client, test_user, single_post_with_comment):
+    response = client.get(url_for("post", id=single_post_with_comment.id))
+    assert single_post_with_comment.comments[0].body.encode() in response.data
+
+
+def test_number_of_comments_for_posts_shown_on_list(client, test_user, single_post):
+    comment1 = Comment(body="Important insight!",
+                       user_id=test_user.id)
+    comment2 = Comment(body="Another insight!",
+                       user_id=test_user.id)
+    single_post.comments.append(comment1)
+    single_post.comments.append(comment2)
+    db.session.commit()
+    response = client.get(url_for("index"))
+    assert b"2 Comments" in response.data
+
+
+def test_if_logged_in_can_comment_on_post(client, test_user, single_post):
+    login(client, test_user.username, PASSWORD)
+    response = client.get(url_for("post", id=single_post.id))
+    assert f"Comment as {test_user.username}".encode() in response.data

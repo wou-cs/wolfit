@@ -1,6 +1,6 @@
 import pytest
 from app import db
-from app.models import User, Post, Category
+from app.models import User, Post, Category, Comment
 from random import randint
 
 USERNAME = "john"
@@ -37,6 +37,16 @@ def single_post():
              user_id=user.id,
              category_id=default_category().id)
     db.session.add(p)
+    db.session.commit()
+    return p
+
+
+@pytest.fixture
+def single_post_with_comment():
+    p = single_post()
+    comment = Comment(body="Important insight!",
+                      user_id=p.author.id)
+    p.comments.append(comment)
     db.session.commit()
     return p
 

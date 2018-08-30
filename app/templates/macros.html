@@ -1,5 +1,13 @@
 {% macro post_meta(post) %}
-  <div class="post-meta"><a href="{{ url_for('category', title=post.category.title) }}" id="category-link">{{ post.category.title }}</a> • Posted by <a href="{{ url_for('user', username=post.author.username) }}" id="author-link">{{ post.author.username }}</a> {{ post.pretty_timestamp() }}</div>
+  <div class="post-meta">
+    <a href="{{ url_for('category', title=post.category.title) }}" id="category-link">{{ post.category.title }}</a> • Posted by <a href="{{ url_for('user', username=post.author.username) }}" id="author-link">{{ post.author.username }}</a> {{ post.pretty_timestamp() }}
+    <br/>
+    <span class="glyphicon glyphicon-comment"></span>&nbsp;{{ post.comment_count() }} Comments
+  </div>
+{% endmacro %}
+
+{% macro comment_meta(comment) %}
+  <div class="comment-meta"><a href="{{ url_for('user', username=comment.author.username) }}">{{ comment.author.username }}</a> • {{ comment.pretty_timestamp() }}</div>
 {% endmacro %}
 
 {% macro voting(post, index, source) %}

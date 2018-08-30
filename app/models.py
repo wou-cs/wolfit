@@ -68,6 +68,12 @@ class User(UserMixin, db.Model):
     post_votes = db.relationship(
         "Post", secondary=user_vote, back_populates="user_votes"
     )
+    comments = db.relationship(
+        "Comment",
+        order_by="desc(Comment.timestamp)",
+        backref="author",
+        lazy="dynamic"
+    )
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -89,6 +95,9 @@ class Post(db.Model):
     vote_count = db.Column(db.Integer, default=0)
     user_votes = db.relationship(
         "User", secondary=user_vote, back_populates="post_votes"
+    )
+    comments = db.relationship(
+        "Comment", order_by="desc(Comment.timestamp)", back_populates="post"
     )
 
     def __repr__(self):
@@ -127,6 +136,9 @@ class Post(db.Model):
         self.adjust_vote(-1)
         db.session.commit()
 
+    def comment_count(self):
+        return len(self.comments)
+
 
 class Category(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -134,6 +146,18 @@ class Category(UserMixin, db.Model):
     posts = db.relationship(
         "Post", order_by="desc(Post.timestamp)", backref="category", lazy="dynamic"
     )
+
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
+    post = db.relationship("Post", back_populates="comments")
+
+    def pretty_timestamp(self):
+        return pretty_date(self.timestamp)
 
 
 @login.user_loader
