@@ -13,6 +13,12 @@ user_vote = db.Table(
     db.Column("post.id", db.Integer, db.ForeignKey("post.id"), primary_key=True),
 )
 
+comment_vote = db.Table(
+    "comment_vote",
+    db.Column("user.id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
+    db.Column("comment.id", db.Integer, db.ForeignKey("comment.id"), primary_key=True),
+)
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +37,9 @@ class User(UserMixin, db.Model):
         order_by="desc(Comment.timestamp)",
         backref="author",
         lazy="dynamic"
+    )
+    comment_votes = db.relationship(
+        "Comment", secondary=comment_vote, back_populates="user_votes"
     )
 
     def set_password(self, password):
@@ -94,6 +103,14 @@ class Post(db.Model):
         self.adjust_vote(-1)
         db.session.commit()
 
+    def add_comment(self, comment, user):
+        comment = Comment(body=comment,
+                          user_id=user.id)
+        self.comments.append(comment)
+        db.session.commit()
+        comment.up_vote(user)
+        return comment
+
     def comment_count(self):
         return len(self.comments)
 
@@ -113,9 +130,39 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
     post = db.relationship("Post", back_populates="comments")
+    vote_count = db.Column(db.Integer, default=0)
+    user_votes = db.relationship(
+        "User", secondary=comment_vote, back_populates="comment_votes"
+    )
+
+    def __repr__(self):
+        return f"<Comment {self.body[:20]}>"
 
     def pretty_timestamp(self):
         return pretty_date(self.timestamp)
+
+    def already_voted(self, user):
+        return user in self.user_votes
+
+    def adjust_vote(self, amount):
+        if self.vote_count is None:
+            self.vote_count = 0
+        self.vote_count += amount
+        db.session.add(self)
+
+    def up_vote(self, user):
+        if self.already_voted(user):
+            return
+        self.user_votes.append(user)
+        self.adjust_vote(1)
+        db.session.commit()
+
+    def down_vote(self, user):
+        if self.already_voted(user):
+            return
+        self.user_votes.append(user)
+        self.adjust_vote(-1)
+        db.session.commit()
 
 
 @login.user_loader

@@ -141,9 +141,7 @@ def post(id):
     if form.validate_on_submit():
         if not current_user.is_authenticated:
             return redirect(url_for("login"))
-        comment = Comment(body=form.body.data, author=current_user)
-        post.comments.append(comment)
-        db.session.commit()
+        post.add_comment(form.body.data, current_user)
         flash("Your comment is now live!")
         return redirect(url_for("post", id=id))
     return render_template(
@@ -174,6 +172,29 @@ def down_vote(id):
     if current_user.is_authenticated:
         post = Post.query.filter_by(id=id).first_or_404()
         post.down_vote(current_user)
+        return redirect(next or url_for('index'))
+    else:
+        return redirect(url_for("login"))
+
+
+@app.route("/up_vote_comment/<id>")
+def up_vote_comment(id):
+    next = request.args.get('next')
+    if current_user.is_authenticated:
+        comment = Comment.query.filter_by(id=id).first_or_404()
+        comment.up_vote(current_user)
+
+        return redirect(next or url_for('index'))
+    else:
+        return redirect(url_for("login"))
+
+
+@app.route("/down_vote_comment/<id>")
+def down_vote_comment(id):
+    next = request.args.get('next')
+    if current_user.is_authenticated:
+        comment = Comment.query.filter_by(id=id).first_or_404()
+        comment.down_vote(current_user)
         return redirect(next or url_for('index'))
     else:
         return redirect(url_for("login"))

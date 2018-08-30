@@ -44,10 +44,7 @@ def single_post():
 @pytest.fixture
 def single_post_with_comment():
     p = single_post()
-    comment = Comment(body="Important insight!",
-                      user_id=p.author.id)
-    p.comments.append(comment)
-    db.session.commit()
+    p.add_comment("Important insight!", p.author)
     return p
 
 

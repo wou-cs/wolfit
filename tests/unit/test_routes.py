@@ -197,13 +197,8 @@ def test_comments_are_shown_after_post(client, test_user, single_post_with_comme
 
 
 def test_number_of_comments_for_posts_shown_on_list(client, test_user, single_post):
-    comment1 = Comment(body="Important insight!",
-                       user_id=test_user.id)
-    comment2 = Comment(body="Another insight!",
-                       user_id=test_user.id)
-    single_post.comments.append(comment1)
-    single_post.comments.append(comment2)
-    db.session.commit()
+    single_post.add_comment("Important insight!", test_user)
+    single_post.add_comment("Another insight!", test_user)
     response = client.get(url_for("index"))
     assert b"2 Comments" in response.data
 
@@ -212,3 +207,18 @@ def test_if_logged_in_can_comment_on_post(client, test_user, single_post):
     login(client, test_user.username, PASSWORD)
     response = client.get(url_for("post", id=single_post.id))
     assert f"Comment as {test_user.username}".encode() in response.data
+
+
+def test_single_comment_should_have_link_to_voting(
+    client, test_user, single_post_with_comment
+):
+    response = client.get(url_for("post", id=single_post_with_comment.id))
+    comment = single_post_with_comment.comments[0]
+    assert (
+        url_for("up_vote_comment", id=comment.id, _external=False).encode()
+        in response.data
+    )
+    assert (
+        url_for("down_vote_comment", id=comment.id, _external=False).encode()
+        in response.data
+    )

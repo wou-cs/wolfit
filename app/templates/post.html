@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
-{% from "macros.html" import post_meta, comment_meta, voting with context %}
+{% from "macros.html" import post_meta, comment_meta, voting, comment_voting with context %}
 {% block app_content %}
 
 <table class="table table-bordered">
@@ -41,7 +41,7 @@
   {% for comment in comments %}
   <tr class="comment-row">
      <td>
-      ?
+      {{ comment_voting(comment) }}
     </td>
     <td>
       {{ comment_meta(comment) }}

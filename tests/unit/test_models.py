@@ -101,23 +101,34 @@ def test_categories_have_posts(client, test_user, default_category, single_post)
 
 
 def test_posts_have_comments(client, test_user, single_post):
-    comment = Comment(body="Important insight!",
-                      user_id=test_user.id)
-    single_post.comments.append(comment)
-    db.session.commit()
-    assert comment in single_post.comments
+    c1 = single_post.add_comment("Important insight!", test_user)
+    assert c1 in single_post.comments
+    assert c1.vote_count == 1
 
 
 def test_comments_can_be_counted(client, test_user, single_post):
-    comment = Comment(body="Important insight!",
-                      user_id=test_user.id)
-    single_post.comments.append(comment)
-    db.session.commit()
-    comment2 = Comment(body="Later important insight!",
-                       user_id=test_user.id)
-    single_post.comments.append(comment2)
-    db.session.commit()
-    assert comment in single_post.comments
-    assert comment2 in single_post.comments
+    c1 = single_post.add_comment("Important insight!", test_user)
+    c2 = single_post.add_comment("Later important insight!", test_user)
+
+    assert c1 in single_post.comments
+    assert c2 in single_post.comments
     assert single_post.comment_count() == 2
 
+
+def test_comments_can_be_voted_on(client, test_user, single_post_with_comment):
+    comment = single_post_with_comment.comments[0]
+    new_user = User(username="robot", email="robot@gmail.com")
+    db.session.add(new_user)
+    db.session.commit()
+    comment.up_vote(new_user)
+    # All comments start with a default vote count of 1
+    assert comment.vote_count == 2
+
+
+def test_user_cannot_change_vote_count_for_own_comment(
+    client, test_user, single_post_with_comment
+):
+    c = single_post_with_comment.comments[0]
+    assert c.vote_count == 1
+    c.up_vote(test_user)
+    assert c.vote_count == 1
