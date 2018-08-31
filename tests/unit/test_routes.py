@@ -1,8 +1,9 @@
 import pytest
 from datetime import datetime, timedelta
+import time
 from flask import url_for
 from app import app, db
-from app.models import User, Post, Comment
+from app.models import User, Post, Comment, ActivityLog
 
 PASSWORD = "yoko"
 
@@ -222,3 +223,32 @@ def test_single_comment_should_have_link_to_voting(
         url_for("down_vote_comment", id=comment.id, _external=False).encode()
         in response.data
     )
+
+
+def test_new_post_should_create_activity_log(client, test_user):
+    login(client, test_user.username, PASSWORD)
+    time.sleep(1.0)
+    title = "Logged post title"
+    client.post(url_for("create_post"), data=dict(
+        title=title,
+        body='',
+        user_id=test_user.id
+    ), follow_redirects=True)
+    e = ActivityLog.latest_entry()
+    assert e is not None
+    assert title in e.details
+    assert test_user.id == e.user_id
+
+
+def test_login_and_logout_create_activity_log(client, test_user):
+    login(client, test_user.username, PASSWORD)
+    e = ActivityLog.latest_entry()
+    assert e is not None
+    assert "Login" in e.details
+    assert test_user.id == e.user_id
+    time.sleep(1.0)
+    logout(client)
+    e = ActivityLog.latest_entry()
+    assert e is not None
+    assert "Logout" in e.details
+    assert test_user.id == e.user_id

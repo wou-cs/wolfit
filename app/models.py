@@ -49,7 +49,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return "<User {}>".format(self.username)
+        return f"<User id {self.id} - {self.username}>"
 
 
 class Post(db.Model):
@@ -68,7 +68,7 @@ class Post(db.Model):
     )
 
     def __repr__(self):
-        return "<Post {}>".format(self.title)
+        return f"<Post id {self.id} - {self.title}>"
 
     @classmethod
     def recent_posts(cls):
@@ -136,7 +136,7 @@ class Comment(db.Model):
     )
 
     def __repr__(self):
-        return f"<Comment {self.body[:20]}>"
+        return f"<Comment id {self.id} - {self.body[:20]}>"
 
     def pretty_timestamp(self):
         return pretty_date(self.timestamp)
@@ -162,6 +162,23 @@ class Comment(db.Model):
             return
         self.user_votes.append(user)
         self.adjust_vote(-1)
+        db.session.commit()
+
+
+class ActivityLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    details = db.Column(db.Text)
+
+    @classmethod
+    def latest_entry(cls):
+        return cls.query.order_by(ActivityLog.timestamp.desc()).first()
+
+    @classmethod
+    def log_event(cls, user_id, details):
+        e = cls(user_id=user_id, details=details)
+        db.session.add(e)
         db.session.commit()
 
 
