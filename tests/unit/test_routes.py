@@ -225,15 +225,16 @@ def test_single_comment_should_have_link_to_voting(
     )
 
 
-def test_new_post_should_create_activity_log(client, test_user):
+def test_new_post_should_create_activity_log(client, test_user, default_category):
     login(client, test_user.username, PASSWORD)
-    time.sleep(1.0)
     title = "Logged post title"
-    client.post(url_for("create_post"), data=dict(
+    response = client.post(url_for("create_post"), data=dict(
         title=title,
         body='',
+        category_id=default_category.id,
         user_id=test_user.id
     ), follow_redirects=True)
+    assert response.status_code == 200
     e = ActivityLog.latest_entry()
     assert e is not None
     assert title in e.details
@@ -246,9 +247,21 @@ def test_login_and_logout_create_activity_log(client, test_user):
     assert e is not None
     assert "Login" in e.details
     assert test_user.id == e.user_id
-    time.sleep(1.0)
     logout(client)
     e = ActivityLog.latest_entry()
     assert e is not None
     assert "Logout" in e.details
     assert test_user.id == e.user_id
+
+
+def test_category_page_should_have_link_to_create_post(
+    client, test_user, default_category
+):
+    response = client.get(url_for("category", title=default_category.title))
+    assert b"Create Post" in response.data
+
+
+def test_create_post_should_ask_for_category(client, test_user):
+    login(client, test_user.username, PASSWORD)
+    response = client.get(url_for("create_post"))
+    assert b"Category" in response.data

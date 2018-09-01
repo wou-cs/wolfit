@@ -171,9 +171,12 @@ class ActivityLog(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     details = db.Column(db.Text)
 
+    def __repr__(self):
+        return f"<ActivityLog id {self.id} - {self.details[:20]}>"
+
     @classmethod
     def latest_entry(cls):
-        return cls.query.order_by(ActivityLog.timestamp.desc()).first()
+        return cls.query.order_by(ActivityLog.id.desc()).first()
 
     @classmethod
     def log_event(cls, user_id, details):

@@ -75,8 +75,17 @@ def create_post():
         return redirect(url_for("register"))
 
     form = PostForm()
+    form.category_id.choices = [
+        (c.id, c.title) for c in Category.query.order_by("title")
+    ]
+
     if form.validate_on_submit():
-        post = Post(title=form.title.data, body=form.body.data, author=current_user)
+        post = Post(
+            title=form.title.data,
+            body=form.body.data,
+            category_id=form.category_id.data,
+            author=current_user,
+        )
         db.session.add(post)
         db.session.commit()
         ActivityLog.log_event(current_user.id, f"Create: {post}")
@@ -154,54 +163,54 @@ def post(id):
         title=post.title,
         post=post,
         comments=post.comments,
-        form=form
+        form=form,
     )
 
 
 @app.route("/up_vote/<id>")
 def up_vote(id):
-    next = request.args.get('next')
+    next = request.args.get("next")
     if current_user.is_authenticated:
         post = Post.query.filter_by(id=id).first_or_404()
         post.up_vote(current_user)
         ActivityLog.log_event(current_user.id, f"Up Vote: {post}")
-        return redirect(next or url_for('index'))
+        return redirect(next or url_for("index"))
     else:
         return redirect(url_for("login"))
 
 
 @app.route("/down_vote/<id>")
 def down_vote(id):
-    next = request.args.get('next')
+    next = request.args.get("next")
     if current_user.is_authenticated:
         post = Post.query.filter_by(id=id).first_or_404()
         post.down_vote(current_user)
         ActivityLog.log_event(current_user.id, f"Down Vote: {post}")
-        return redirect(next or url_for('index'))
+        return redirect(next or url_for("index"))
     else:
         return redirect(url_for("login"))
 
 
 @app.route("/up_vote_comment/<id>")
 def up_vote_comment(id):
-    next = request.args.get('next')
+    next = request.args.get("next")
     if current_user.is_authenticated:
         comment = Comment.query.filter_by(id=id).first_or_404()
         comment.up_vote(current_user)
         ActivityLog.log_event(current_user.id, f"Up Vote: {comment}")
-        return redirect(next or url_for('index'))
+        return redirect(next or url_for("index"))
     else:
         return redirect(url_for("login"))
 
 
 @app.route("/down_vote_comment/<id>")
 def down_vote_comment(id):
-    next = request.args.get('next')
+    next = request.args.get("next")
     if current_user.is_authenticated:
         comment = Comment.query.filter_by(id=id).first_or_404()
         comment.down_vote(current_user)
         ActivityLog.log_event(current_user.id, f"Down Vote: {comment}")
-        return redirect(next or url_for('index'))
+        return redirect(next or url_for("index"))
     else:
         return redirect(url_for("login"))
 
