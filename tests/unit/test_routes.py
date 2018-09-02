@@ -261,7 +261,17 @@ def test_category_page_should_have_link_to_create_post(
     assert b"Create Post" in response.data
 
 
-def test_create_post_should_ask_for_category(client, test_user):
+def test_create_post_should_ask_for_category(client, test_user, default_category):
     login(client, test_user.username, PASSWORD)
     response = client.get(url_for("create_post"))
     assert b"Category" in response.data
+
+
+def test_link_posts_should_have_link_to_url(client, test_user):
+    link_post = Post(title="Interesting link I found",
+                     link=True,
+                     url="http://example.com")
+    db.session.add(link_post)
+    db.session.commit()
+    response = client.get(url_for("post", id=link_post.id))
+    assert link_post.url.encode() in response.data

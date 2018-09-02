@@ -10,10 +10,16 @@
     </td>
     <td>
       {{ post_meta(post) }}
-      <h1 id="post-title">{{ post.title }}</h1>
+      {% if post.link %}
+        <h1 id="post-title"><a href="{{ post.url }}">{{ post.title }}</a></h1>
+      {% else %}
+        <h1 id="post-title">{{ post.title }}</h1>
+      {% endif %}
+      {% if post.body_as_html() %}
       <div>
         {{ post.body_as_html()|safe }}
       </div>
+      {% endif %}
     </td>
   </tr>
   <tr class="new-comment-row">

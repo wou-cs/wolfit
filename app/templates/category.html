@@ -2,7 +2,7 @@
 
 {% block app_content %}
   <h1>Posts for category: {{ category }}</h1>
-  <p><a href="{{ url_for('create_post') }}" id="create-post-link">Create Post</a></p>
+  <p><a href="{{ url_for('create_post', category_id=category_id) }}" id="create-post-link">Create Post</a></p>
   <hr>
   {% include 'posts_list.html' %}
 {% endblock %}

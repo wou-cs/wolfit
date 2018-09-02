@@ -40,9 +40,11 @@ class RegistrationForm(FlaskForm):
 
 class PostForm(FlaskForm):
     category_id = SelectField(u"Category", coerce=int)
-    title = StringField("Title", validators=[DataRequired(), Length(min=1, max=280)])
+    title = StringField("Title", validators=[DataRequired(), Length(min=1, max=256)])
+    link = BooleanField("Link Post")
+    url = StringField("URL", validators=[Length(min=0, max=256)])
     body = TextAreaField("Text (optional)", validators=[Length(min=0, max=2800)])
-    submit = SubmitField("Post")
+    submit = SubmitField("Create Post")
 
 
 class CommentForm(FlaskForm):

@@ -23,7 +23,7 @@ class TestLoggedInUser(TestLiveServer):
         password.send_keys(Keys.ENTER)
         self.wait_for_element(client, "user-greeting", test_user.username)
 
-    def test_create_new_post(self, client, test_user):
+    def test_create_new_post(self, client, test_user, default_category):
         body = ("Start of the body\n"
                 "\n"
                 "* Bullet 1\n"

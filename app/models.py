@@ -56,6 +56,8 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256))
     body = db.Column(db.Text)
+    link = db.Column(db.Boolean, default=False)
+    url = db.Column(db.String(256))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"))
@@ -75,6 +77,8 @@ class Post(db.Model):
         return cls.query.order_by(Post.timestamp.desc())
 
     def body_as_html(self):
+        if not self.body:
+            return None
         return markdown.markdown(self.body)
 
     def pretty_timestamp(self):

@@ -74,15 +74,22 @@ def create_post():
     if not current_user.is_authenticated:
         return redirect(url_for("register"))
 
+    category_id = request.args.get("category_id", None, type=int)
     form = PostForm()
+    categories = Category.query.order_by("title")
     form.category_id.choices = [
-        (c.id, c.title) for c in Category.query.order_by("title")
+        (c.id, c.title) for c in categories
     ]
+    form.category_id.data = (category_id
+                             if category_id
+                             else categories.first().id)
 
     if form.validate_on_submit():
         post = Post(
             title=form.title.data,
             body=form.body.data,
+            link=form.link.data,
+            url=form.url.data,
             category_id=form.category_id.data,
             author=current_user,
         )
@@ -143,6 +150,7 @@ def category(title):
         greeting_name=greeting_name(),
         title="Category",
         category=title,
+        category_id=category.id,
         posts=posts,
     )
 

@@ -47,6 +47,11 @@ def test_post_body_markdown_render():
     assert "<a href=" in new_post.body_as_html()
 
 
+def test_post_body_render_should_work_with_empty_body():
+    empty_body_post = Post(title="No body", body=None)
+    assert empty_body_post.body_as_html() is None
+
+
 def test_recent_posts_should_be_ordered(client, test_user, single_post):
     single_post.timestamp = single_post.timestamp - timedelta(days=1)
     db.session.add(single_post)
@@ -132,3 +137,9 @@ def test_user_cannot_change_vote_count_for_own_comment(
     assert c.vote_count == 1
     c.up_vote(test_user)
     assert c.vote_count == 1
+
+
+def test_posts_can_be_just_links_without_body(client, test_user):
+    title = "Link post"
+    new_post = Post(title=title, link=True, url="http://wou.edu")
+    assert new_post.link
