@@ -5,14 +5,19 @@
 {% endblock %}
 
 {% block navbar %}
+<style media="screen" type="text/css">
+    .navbar-brand,
+    .navbar-nav li a {
+        line-height: 75px;
+        height: 75px;
+        padding-top: 0;
+    }
+</style>
     <nav class="navbar navbar-default">
         <div id="header" class="container-fluid">
             <div id="nav-main" class="navbar-header">
-                <a class="navbar-brand" href="/index">Wolfit</a>
+                <a class="navbar-brand" href="/index"><img src="{{ url_for('static', filename='img/wolfit-logo.png') }}"></a>
             </div>
-            <ul class="nav navbar-nav navbar-left">
-                <li class="nav" id="nav-home"><a href="/index">Home</a></li>
-            </ul>
             <ul class="nav navbar-nav navbar-right">
             {% if current_user.is_anonymous %}
                 <li class="nav" id="nav-login"><a href="{{ url_for('login') }}" id="nav-login-link">Login</a></li>
