@@ -1,3 +1,3 @@
 #!/bin/bash
 export WOLFIT_SETTINGS=$(pwd)/dev.settings
-flask run
+flask run --host=0.0.0.0
