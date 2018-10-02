@@ -12,6 +12,32 @@ Your command will look something like this:
 $ git clone https://github.com/wou-cs/wolfit.git
 ```
 
+In addition, you probably want to connect this local repo to your own remote, detaching from the master repository.
+
+``` sh
+$ cd wolfit
+$ git remote set-url origin https://new.url.here
+```
+
+## Configure your databases
+
+You should create two databases in your local MySQL environment, one for development and one for test. The development database is a *sandbox* that you can use for interactive play and testing. It will retain data and allow you to interact with the app. The test database will get torn down and recreated **every time you run the test suite**.
+
+I recommend naming the databases something like `wolfit_test` and `wolfit_dev`.
+
+Below is an example of an interaction with MySQL where I create the test database and a user to interact with it.
+
+``` sh
+$ mysql --user=root --password mysql
+Enter password:
+mysql> CREATE USER 'wolfit-test'@'localhost' IDENTIFIED BY 'testing';
+Query OK, 0 rows affected (0.00 sec)
+mysql> CREATE DATABASE wolfit_test;
+Query OK, 1 row affected (0.00 sec)
+mysql> GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,REFERENCES,ALTER ON wolfit_test.* TO 'wolfit-test'@'localhost';
+Query OK, 0 rows affected (0.00 sec)
+```
+
 ## Steps to make this work in your local environment
 
 * Create two schemas in your MySQL database: one for development, one for testing. The testing database will get built up and broken down each time you test. The development database will be your sandbox for exploring the app.
