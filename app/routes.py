@@ -77,6 +77,11 @@ def create_post():
     category_id = request.args.get("category_id", None, type=int)
     form = PostForm()
     categories = Category.query.order_by("title")
+    if categories.count() == 0:
+        category = Category(title="default")
+        db.session.add(category)
+        db.session.commit()
+        categories = Category.query.order_by("title")
     form.category_id.choices = [
         (c.id, c.title) for c in categories
     ]

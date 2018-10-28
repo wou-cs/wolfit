@@ -6,7 +6,6 @@ import markdown
 from app import db, login
 from app.helpers import pretty_date
 
-
 user_vote = db.Table(
     "user_vote",
     db.Column("user.id", db.Integer, db.ForeignKey("user.id"), primary_key=True),

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import time
 from flask import url_for
 from app import app, db
-from app.models import User, Post, Comment, ActivityLog
+from app.models import User, Post, Comment, ActivityLog, Category
 
 PASSWORD = "yoko"
 
@@ -223,6 +223,14 @@ def test_single_comment_should_have_link_to_voting(
         url_for("down_vote_comment", id=comment.id, _external=False).encode()
         in response.data
     )
+
+
+def test_should_see_category_created_with_new_post_and_no_categories(client, test_user):
+    login(client, test_user.username, PASSWORD)
+    response = client.get(url_for("create_post"))
+    assert response.status_code == 200
+    categories = Category.query.order_by("title")
+    assert categories.count() == 1
 
 
 def test_new_post_should_create_activity_log(client, test_user, default_category):

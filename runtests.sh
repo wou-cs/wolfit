@@ -2,4 +2,4 @@
 export WOLFIT_SETTINGS=$(pwd)/test.settings
 export FLASK_ENV=test
 export FLASK_DEBUG=0
-pytest -x $@
+pytest -W ignore::DeprecationWarning -x $@
