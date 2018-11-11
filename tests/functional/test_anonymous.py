@@ -1,9 +1,13 @@
-import pytest
 from datetime import timedelta
+
 from flask import url_for
-from app import app, db
-from app.models import User, Post
+
+import pytest
+
 from test_live_server import TestLiveServer
+
+from app import app, db
+from app.models import Post, User
 
 
 class TestAnonymousUser(TestLiveServer):

@@ -1,9 +1,11 @@
-import praw
-from datetime import datetime
-from app.models import User, Post, Category
-from app import app, db, config
-from random import randint
 import argparse
+from datetime import datetime
+from random import randint
+
+import praw
+
+from app import app, config, db
+from app.models import Category, Post, User
 
 parser = argparse.ArgumentParser(description='Load posts from a subreddit.')
 parser.add_argument('subreddit', metavar='subreddit', nargs='?', default='learnpython',

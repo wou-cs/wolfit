@@ -1,10 +1,15 @@
-import pytest
 import time
+
 from flask import url_for
+
+import pytest
+
 from selenium.webdriver.common.keys import Keys
-from app import app, db
-from app.models import User, Post
+
 from test_live_server import TestLiveServer
+
+from app import app, db
+from app.models import Post, User
 
 PASSWORD = "yoko"
 

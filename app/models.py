@@ -1,8 +1,11 @@
 from datetime import datetime
-from dateutil import tz
-from werkzeug.security import generate_password_hash, check_password_hash
+
 from flask_login import UserMixin
+
 import markdown
+
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from app import db, login
 from app.helpers import pretty_date
 
@@ -189,5 +192,5 @@ class ActivityLog(db.Model):
 
 
 @login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+def load_user(user_id):
+    return User.query.get(int(user_id))

@@ -1,12 +1,16 @@
+import multiprocessing
 import os
 import tempfile
-import pytest
-import config
 import threading
 import time
-import multiprocessing
-from app import app, db
+
+import config
+
+import pytest
+
 from selenium import webdriver
+
+from app import app, db
 
 
 class LiveClient(object):

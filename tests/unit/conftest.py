@@ -1,7 +1,10 @@
 import os
 import tempfile
-import pytest
+
 import config
+
+import pytest
+
 from app import app, db
 
 

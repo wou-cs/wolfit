@@ -1,9 +1,12 @@
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import current_user, login_user, logout_user, login_required
 from datetime import datetime
+
+from flask import flash, redirect, render_template, request, url_for
+
+from flask_login import current_user, login_required, login_user, logout_user
+
 from app import app, db
-from app.models import User, Post, Category, Comment, ActivityLog
-from app.forms import LoginForm, RegistrationForm, PostForm, CommentForm
+from app.forms import CommentForm, LoginForm, PostForm, RegistrationForm
+from app.models import ActivityLog, Category, Comment, Post, User
 
 
 def greeting_name():
@@ -160,16 +163,16 @@ def category(title):
     )
 
 
-@app.route("/post/<id>", methods=["GET", "POST"])
-def post(id):
-    post = Post.query.filter_by(id=id).first_or_404()
+@app.route("/post/<post_id>", methods=["GET", "POST"])
+def post(post_id):
+    post = Post.query.filter_by(id=post_id).first_or_404()
     form = CommentForm()
     if form.validate_on_submit():
         if not current_user.is_authenticated:
             return redirect(url_for("login"))
         post.add_comment(form.body.data, current_user)
         flash("Your comment is now live!")
-        return redirect(url_for("post", id=id))
+        return redirect(url_for("post", post_id=post_id))
     return render_template(
         "post.html",
         greeting_name=greeting_name(),
@@ -180,50 +183,50 @@ def post(id):
     )
 
 
-@app.route("/up_vote/<id>")
-def up_vote(id):
-    next = request.args.get("next")
+@app.route("/up_vote/<post_id>")
+def up_vote(post_id):
+    next_page = request.args.get("next")
     if current_user.is_authenticated:
-        post = Post.query.filter_by(id=id).first_or_404()
+        post = Post.query.filter_by(id=post_id).first_or_404()
         post.up_vote(current_user)
         ActivityLog.log_event(current_user.id, f"Up Vote: {post}")
-        return redirect(next or url_for("index"))
+        return redirect(next_page or url_for("index"))
     else:
         return redirect(url_for("login"))
 
 
-@app.route("/down_vote/<id>")
-def down_vote(id):
-    next = request.args.get("next")
+@app.route("/down_vote/<post_id>")
+def down_vote(post_id):
+    next_page = request.args.get("next")
     if current_user.is_authenticated:
-        post = Post.query.filter_by(id=id).first_or_404()
+        post = Post.query.filter_by(id=post_id).first_or_404()
         post.down_vote(current_user)
         ActivityLog.log_event(current_user.id, f"Down Vote: {post}")
-        return redirect(next or url_for("index"))
+        return redirect(next_page or url_for("index"))
     else:
         return redirect(url_for("login"))
 
 
-@app.route("/up_vote_comment/<id>")
-def up_vote_comment(id):
-    next = request.args.get("next")
+@app.route("/up_vote_comment/<comment_id>")
+def up_vote_comment(comment_id):
+    next_page = request.args.get("next")
     if current_user.is_authenticated:
-        comment = Comment.query.filter_by(id=id).first_or_404()
+        comment = Comment.query.filter_by(id=comment_id).first_or_404()
         comment.up_vote(current_user)
         ActivityLog.log_event(current_user.id, f"Up Vote: {comment}")
-        return redirect(next or url_for("index"))
+        return redirect(next_page or url_for("index"))
     else:
         return redirect(url_for("login"))
 
 
-@app.route("/down_vote_comment/<id>")
-def down_vote_comment(id):
-    next = request.args.get("next")
+@app.route("/down_vote_comment/<comment_id>")
+def down_vote_comment(comment_id):
+    next_page = request.args.get("next")
     if current_user.is_authenticated:
-        comment = Comment.query.filter_by(id=id).first_or_404()
+        comment = Comment.query.filter_by(id=comment_id).first_or_404()
         comment.down_vote(current_user)
         ActivityLog.log_event(current_user.id, f"Down Vote: {comment}")
-        return redirect(next or url_for("index"))
+        return redirect(next_page or url_for("index"))
     else:
         return redirect(url_for("login"))
 

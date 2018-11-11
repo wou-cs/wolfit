@@ -9,7 +9,7 @@
       {{ voting(post, loop.index0) }}
     </td>
     <td>
-      <div class="post-title"><a href="{{ url_for("post", id=post.id) }}" id="post-{{ loop.index0 }}-link">{{ post.title }}</a></div>
+      <div class="post-title"><a href="{{ url_for("post", post_id=post.id) }}" id="post-{{ loop.index0 }}-link">{{ post.title }}</a></div>
       {{ post_meta(post) }}
     </td>
   </tr>

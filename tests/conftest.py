@@ -1,7 +1,9 @@
-import pytest
-from app import db
-from app.models import User, Post, Category, Comment
 from random import randint
+
+import pytest
+
+from app import db
+from app.models import Category, Comment, Post, User
 
 USERNAME = "john"
 PASSWORD = "yoko"

@@ -1,5 +1,7 @@
 import time
+
 import pytest
+
 from selenium.common.exceptions import WebDriverException
 
 MAX_WAIT = 10
@@ -12,11 +14,11 @@ class TestLiveServer(object):
         yield
         client.end()
 
-    def wait_for_element(self, client, id, text):
+    def wait_for_element(self, client, element_id, text):
         start_time = time.time()
         while True:
             try:
-                element = client.browser.find_element_by_id(id).text
+                element = client.browser.find_element_by_id(element_id).text
                 assert text in element
                 return
             except (AssertionError, WebDriverException) as e:
