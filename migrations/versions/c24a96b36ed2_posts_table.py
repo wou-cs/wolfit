@@ -21,10 +21,13 @@ def upgrade():
     op.create_table(
         "post",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("body", sa.String(length=140), nullable=True),
+        sa.Column("title", sa.String(length=256), nullable=True),
+        sa.Column("body", sa.Text(), nullable=True),
         sa.Column("timestamp", sa.DateTime(), nullable=True),
         sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("category_id", sa.Integer(), nullable=True),
         sa.ForeignKeyConstraint(["user_id"], ["user.id"]),
+        sa.ForeignKeyConstraint(["category_id"], ["category.id"]),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_post_timestamp"), "post", ["timestamp"], unique=False)

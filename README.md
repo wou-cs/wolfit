@@ -1,8 +1,8 @@
-## First Things First: Python 3 and MySQL
+## First Things First: Python 3 and SQLite
 
-Before you clone and try to get the sample app working, you'll need a valid Python 3 installation ([Python downloads](https://www.python.org/downloads/)).
+Before you clone and try to get the sample app working, you'll need a valid Python 3 (3.7 or newer) installation ([Python downloads](https://www.python.org/downloads/)).
 
-Next, make sure you either have access to a MySQL server, or [install your own local instance](https://dev.mysql.com/downloads/mysql/).
+Next, make sure you have a working [SQLite3](https://www.sqlite.org/) engine installed. On MacOS or Linux it is probably already installed. You should also install the [DB Browser for SQLite](https://sqlitebrowser.org/) as this will help you inspect schemas and data. 
 
 ## Clone this repository to your local dev environment
 
@@ -19,38 +19,24 @@ $ cd wolfit
 $ git remote set-url origin https://new.url.here
 ```
 
-## Configure your databases
+## Configure your settings files
 
-You should create two databases in your local MySQL environment, one for development and one for test. The development database is a *sandbox* that you can use for interactive play and testing. It will retain data and allow you to interact with the app. The test database will get torn down and recreated **every time you run the test suite**.
+You will create two settings files, one for development and one for test. These files will provide a [Flask secret key](https://stackoverflow.com/questions/22463939/demystify-flask-app-secret-key) and a name for your development and test databases. The development database is a *sandbox* that you can use for interactive play and testing. It will retain data and allow you to interact with the app. The test database will get torn down and recreated **every time you run the test suite**.
 
-I recommend naming the databases something like `wolfit_test` and `wolfit_dev`.
-
-Below is an example of an interaction with MySQL where I create the test database and a user to interact with it.
+* Create your own dev.settings and test.settings files (do not check these into Git). Start by copying the `example.settings` file.
 
 ``` sh
-$ mysql --user=root --password mysql
-Enter password:
-mysql> CREATE USER 'wolfit-test'@'localhost' IDENTIFIED BY 'testing';
-Query OK, 0 rows affected (0.00 sec)
-mysql> CREATE DATABASE wolfit_test;
-Query OK, 1 row affected (0.00 sec)
-mysql> GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,REFERENCES,ALTER ON wolfit_test.* TO 'wolfit-test'@'localhost';
-Query OK, 0 rows affected (0.00 sec)
+$ cp example.settings dev.settings
+$ cp example.settings test.settings
 ```
-
-## Steps to make this work in your local environment
-
-* Create two schemas in your MySQL database: one for development, one for testing. The testing database will get built up and broken down each time you test. The development database will be your sandbox for exploring the app.
-* Create your own dev.settings and test.settings files (do not check these into Git). Each will contain:
+* Each will contain two environment variables:
 
 ``` py
 SECRET_KEY = "your generated secret key"
-DB_HOST = 'localhost'
-BLOG_DATABASE_NAME = 'wolfit_dev'
-DB_USERNAME = 'wolfit-app'
-DB_PASSWORD = 'the password you choose'
+BLOG_DATABASE_NAME = 'wolfit_XYZ.db'
 ```
 
+* [Generate your own secret key](https://stackoverflow.com/questions/34902378/where-do-i-get-a-secret-key-for-flask). Best practice is to *not* check secrets like this into Git, hence the reason `dev.settings` and `test.settings` are in the `.gitignore` file.
 * Configure your pipenv environment and download required Python modules. Start by getting pipenv itself working using [these instructions](https://pipenv.readthedocs.io/en/latest/). Then, in the working directory containing the clone of this app:
 
 ``` sh
@@ -58,7 +44,7 @@ $ pipenv install
 $ pipenv shell
 ```
 
-Once you have requisite libraries installed, you will *always* need to start your development session by entering the pipenv shell.
+Once you have requisite libraries installed, you will *always* need to start your development session by entering the `pipenv shell`.
 
 ## Build / migrate the database
 
@@ -66,7 +52,7 @@ Once you have requisite libraries installed, you will *always* need to start you
 $ flask db upgrade
 ```
 
-You should see all of the migrations being applied to your development database.
+You should see all of the migrations being applied to your development database. Ignore any "unsupported ALTER" warnings: we are using a non-production quality database (SQLite) that doesn't support the full SQL language.
 
 ## Run tests
 
@@ -120,4 +106,4 @@ $ python load_reddit_posts
 
 You can optionally give the name of a subreddit as the first parameter. By default the script will load from [`/r/learnpython`](https://www.reddit.com/r/learnpython/).
 
-*Note* -- This is script is not terribly resilient and may fail with some title and body formatting issues because of the source data from Reddit.
+*Note* -- This is script is not terribly resilient and may fail with some title and body formatting issues because of the source data from Reddit. Still, it should load *some* posts allowing you have some data to work with. You can point the tool at other subreddits as well - just run `python load_reddit_posts.py --help` to see how to do this.

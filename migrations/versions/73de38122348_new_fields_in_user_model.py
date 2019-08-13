@@ -1,7 +1,7 @@
 """new fields in user model
 
 Revision ID: 73de38122348
-Revises: 089babc6268d
+Revises: c24a96b36ed2
 Create Date: 2018-06-26 09:28:17.174183
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "73de38122348"
-down_revision = "089babc6268d"
+down_revision = "c24a96b36ed2"
 branch_labels = None
 depends_on = None
 
