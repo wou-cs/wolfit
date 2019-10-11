@@ -8,3 +8,4 @@ test.env
 praw.ini
 wolfit_dev.db
 wolfit_test.db
+.vscode/
