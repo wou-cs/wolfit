@@ -144,7 +144,10 @@ def test_profile_should_show_posts_for_that_user(
     response = client.get(url_for("user", username=test_user.username))
     assert single_post.title.encode() in response.data
     assert random_post.title.encode() not in response.data
-    assert url_for("post", post_id=single_post.id, _external=False).encode() in response.data
+    assert (
+        url_for("post", post_id=single_post.id, _external=False).encode()
+        in response.data
+    )
 
 
 def test_last_seen_should_update_automatically_when_login(client, test_user):
@@ -162,7 +165,10 @@ def test_last_seen_should_update_automatically_when_login(client, test_user):
 
 def test_index_with_posts_should_have_links_to_details(client, single_post):
     response = client.get(url_for("index"))
-    assert url_for("post", post_id=single_post.id, _external=False).encode() in response.data
+    assert (
+        url_for("post", post_id=single_post.id, _external=False).encode()
+        in response.data
+    )
 
 
 def test_post_should_have_detail_page_with_body(client, single_post):
@@ -178,7 +184,8 @@ def test_home_page_should_have_a_link_to_create_a_new_post(client, test_user):
 def test_single_post_should_have_link_to_voting(client, test_user, single_post):
     response = client.get(url_for("index"))
     assert (
-        url_for("up_vote", post_id=single_post.id, _external=False).encode() in response.data
+        url_for("up_vote", post_id=single_post.id, _external=False).encode()
+        in response.data
     )
     assert (
         url_for("down_vote", post_id=single_post.id, _external=False).encode()
@@ -192,7 +199,10 @@ def test_should_be_a_category_page_that_shows_posts(
     response = client.get(url_for("category", title=default_category.title))
     assert single_post.title.encode() in response.data
     assert random_post.title.encode() in response.data
-    assert url_for("post", post_id=single_post.id, _external=False).encode() in response.data
+    assert (
+        url_for("post", post_id=single_post.id, _external=False).encode()
+        in response.data
+    )
 
 
 def test_comments_are_shown_after_post(client, test_user, single_post_with_comment):
@@ -239,12 +249,13 @@ def test_should_see_category_created_with_new_post_and_no_categories(client, tes
 def test_new_post_should_create_activity_log(client, test_user, default_category):
     login(client, test_user.username, PASSWORD)
     title = "Logged post title"
-    response = client.post(url_for("create_post"), data=dict(
-        title=title,
-        body='',
-        category_id=default_category.id,
-        user_id=test_user.id
-    ), follow_redirects=True)
+    response = client.post(
+        url_for("create_post"),
+        data=dict(
+            title=title, body="", category_id=default_category.id, user_id=test_user.id
+        ),
+        follow_redirects=True,
+    )
     assert response.status_code == 200
     e = ActivityLog.latest_entry()
     assert e is not None
@@ -279,9 +290,9 @@ def test_create_post_should_ask_for_category(client, test_user, default_category
 
 
 def test_link_posts_should_have_link_to_url(client, test_user):
-    link_post = Post(title="Interesting link I found",
-                     link=True,
-                     url="http://example.com")
+    link_post = Post(
+        title="Interesting link I found", link=True, url="http://example.com"
+    )
     db.session.add(link_post)
     db.session.commit()
     response = client.get(url_for("post", post_id=link_post.id))
