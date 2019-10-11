@@ -1,6 +1,11 @@
 from random import randint
+from os import environ, getcwd
 
 import pytest
+
+if 'WOLFIT_SETTINGS' not in environ:
+    environ["WOLFIT_SETTINGS"] = f"{getcwd()}/test.settings"
+
 
 from app import db
 from app.models import Category, Comment, Post, User
