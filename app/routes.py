@@ -88,9 +88,7 @@ def create_post():
     form.category_id.choices = [
         (c.id, c.title) for c in categories
     ]
-    form.category_id.data = (category_id
-                             if category_id
-                             else categories.first().id)
+    form.category_id.data = category_id or categories.first().id
 
     if form.validate_on_submit():
         post = Post(
