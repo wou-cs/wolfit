@@ -32,9 +32,9 @@ class LiveClient(object):
         db.drop_all()
         db.create_all()
         self.ctx = app.app_context()
-        options = webdriver.ChromeOptions()
-        options.add_argument("headless")
-        self.browser = webdriver.Chrome(chrome_options=options)
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("headless")
+        self.browser = webdriver.Chrome(options=chrome_options)
 
         # Start Flask server in a thread
         threading.Thread(target=app.run).start()

@@ -1,6 +1,6 @@
 ## First Things First: Python 3 and SQLite
 
-Before you clone and try to get the sample app working, you'll need a valid Python 3 (3.7 or newer) installation ([Python downloads](https://www.python.org/downloads/)).
+Before you clone and try to get the sample app working, you'll need a valid Python 3 (3.8 or newer) installation ([Python downloads](https://www.python.org/downloads/)).
 
 Next, make sure you have a working [SQLite3](https://www.sqlite.org/) engine installed. On MacOS or Linux it is probably already installed. You should also install the [DB Browser for SQLite](https://sqlitebrowser.org/) as this will help you inspect schemas and data. 
 
