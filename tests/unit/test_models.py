@@ -1,12 +1,8 @@
 import textwrap
 from datetime import timedelta
 
-import pytest
-
-from sqlalchemy import exc
-
 from app import db
-from app.models import Category, Comment, Post, User
+from app.models import Category, Post, User
 
 
 def test_new_user():
