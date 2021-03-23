@@ -64,9 +64,18 @@ You should see all of the migrations being applied to your development database.
 
 ## Run tests
 
+If you have `chromedriver` successfully installed, you can run all the tests:
+
 ``` sh
 $ ./runtests.sh
 ```
+
+If you don't have `chromedriver`, you can run just the unit tests:
+
+``` sh
+$ ./runtests.sh tests/unit
+```
+
 
 ## Run dev server (local web server)
 
