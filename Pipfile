@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = ">=1.1.2"
+flask = ">=1.1.4"
 flask-script = "*"
 flask-wtf = "*"
 flask-sqlalchemy = "*"
@@ -13,7 +13,7 @@ flask-login = "*"
 praw = "*"
 markdown = "*"
 flask-bootstrap = "*"
-urllib3 = ">=1.26.4"
+urllib3 = ">=1.26.5"
 email-validator = "*"
 
 [dev-packages]
@@ -24,4 +24,4 @@ flask-testing = "*"
 selenium = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
