@@ -115,12 +115,13 @@ Follow these steps:
 6. Under your app name you will see a client ID that looks something like this: `R2jyWgoETNkBfQ`
 7. You will also see your secret shown. Copy both the client ID and the secret into your praw.ini file.
 
-Then you can load up some sample posts:
+Then you can load up some sample posts by running the following shell script:
 
 ``` sh
-$ python load_reddit_posts
+$ ./load_sample_data.sh
 ```
 
-You can optionally give the name of a subreddit as the first parameter. By default the script will load from [`/r/learnpython`](https://www.reddit.com/r/learnpython/).
+
+You can optionally give the name of a subreddit as the first parameter to the `python load_reddit_posts.py` portion of the script above. By default the script will load from [`/r/learnpython`](https://www.reddit.com/r/learnpython/).
 
 *Note* -- This is script is not terribly resilient and may fail with some title and body formatting issues because of the source data from Reddit. Still, it should load *some* posts allowing you have some data to work with. You can point the tool at other subreddits as well - just run `python load_reddit_posts.py --help` to see how to do this.
