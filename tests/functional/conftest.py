@@ -12,20 +12,20 @@ from selenium import webdriver
 
 from app import app, db
 
+PORT = "8080"
+
 
 class LiveClient(object):
     def __init__(self):
         app.config.from_object(config.Config)
         app.config.from_envvar("WOLFIT_SETTINGS")
         app.config["WTF_CSRF_ENABLED"] = False
-        app.config["LIVESERVER_PORT"] = 5000
-        # app.config['SERVER_NAME'] = 'localhost'
 
     def get_server_url(self):
         """
         Return the url of the test server
         """
-        return "http://localhost:5000"
+        return f"http://localhost:{PORT}"
 
     def begin(self):
         db.session.close()
@@ -37,7 +37,7 @@ class LiveClient(object):
         self.browser = webdriver.Chrome(options=chrome_options)
 
         # Start Flask server in a thread
-        threading.Thread(target=app.run).start()
+        threading.Thread(target=app.run, kwargs={'port': PORT}).start()
         time.sleep(0.5)
         self.ctx.push()
 
