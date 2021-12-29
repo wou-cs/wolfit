@@ -1,5 +1,5 @@
 from datetime import timedelta
-
+from selenium.webdriver.common.by import By
 from flask import url_for
 
 import pytest
@@ -15,17 +15,17 @@ class TestAnonymousUser(TestLiveServer):
         client.browser.get(client.get_server_url())
         self.wait_for_element(client, "nav-login-link", "Login")
         assert "Wolfit" in client.browser.title
-        greeting = client.browser.find_element_by_id("nav-login-link").text
+        greeting = client.browser.find_element(By.ID, "nav-login-link").text
         assert "Login" in greeting
 
     def test_navigation_when_not_logged_in(self, client):
         client.browser.get(client.get_server_url())
         self.wait_for_element(client, "nav-login-link", "Login")
-        nav = client.browser.find_element_by_id("nav-main").find_element_by_xpath(
+        nav = client.browser.find_element(By.ID, "nav-main").find_element(By.XPATH,
             ".//a"
         )
         assert "index" in nav.get_attribute("href")
-        nav = client.browser.find_element_by_id("nav-login").find_element_by_xpath(
+        nav = client.browser.find_element(By.ID, "nav-login").find_element(By.XPATH,
             ".//a"
         )
         assert "login" in nav.get_attribute("href")
@@ -33,10 +33,10 @@ class TestAnonymousUser(TestLiveServer):
     def test_single_post_should_have_link_back_to_author(self, client, single_post):
         client.browser.get(client.get_server_url())
         self.wait_for_element(client, "post-0-link", single_post.title)
-        post_link = client.browser.find_element_by_id("post-0-link")
+        post_link = client.browser.find_element(By.ID, "post-0-link")
         post_link.click()
         self.wait_for_element(client, "post-title", single_post.title)
-        author_link = client.browser.find_element_by_id("author-link")
+        author_link = client.browser.find_element(By.ID, "author-link")
         assert single_post.author.username in author_link.text
 
     def test_posts_should_be_ordered_most_recent_first(
@@ -51,5 +51,5 @@ class TestAnonymousUser(TestLiveServer):
         db.session.commit()
         client.browser.get(client.get_server_url())
         self.wait_for_element(client, "nav-login-link", "Login")
-        recent_post_link = client.browser.find_element_by_id("post-0-link")
+        recent_post_link = client.browser.find_element(By.ID, "post-0-link")
         assert p.title in recent_post_link.text

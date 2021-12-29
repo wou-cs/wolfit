@@ -37,7 +37,8 @@ class LiveClient(object):
         self.browser = webdriver.Chrome(options=chrome_options)
 
         # Start Flask server in a thread
-        threading.Thread(target=app.run, kwargs={'port': PORT}).start()
+        self.t = threading.Thread(target=app.run, kwargs={'port': PORT})
+        self.t.start()
         time.sleep(0.5)
         self.ctx.push()
 
@@ -45,6 +46,7 @@ class LiveClient(object):
         # remove application context
         self.ctx.pop()
         self.browser.get(f"{(self.get_server_url())}/shutdown")
+        # self.t.join()
         self.browser.quit()
 
 
