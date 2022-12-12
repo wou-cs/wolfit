@@ -21,7 +21,6 @@ email-validator = "*"
 pytest = "*"
 coverage = "*"
 flask-testing = "*"
-selenium = "*"
 
 [requires]
 python_version = "3"

@@ -23,18 +23,12 @@ def before_request():
         db.session.commit()
 
 
-def shutdown_server():
-    func = request.environ.get("werkzeug.server.shutdown")
-    if func is None:
-        raise RuntimeError("Not running with the Werkzeug Server")
-    func()
-
-
 @app.route("/")
 @app.route("/index")
 def index():
     page = request.args.get("page", 1, type=int)
-    posts = Post.recent_posts().paginate(page, app.config["POSTS_PER_PAGE"], False)
+    posts = Post.recent_posts().paginate(
+        page=page, per_page=app.config["POSTS_PER_PAGE"])
 
     return render_template(
         "index.html",
@@ -134,7 +128,7 @@ def register():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get("page", 1, type=int)
-    posts = user.posts.paginate(page, app.config["POSTS_PER_PAGE"], False)
+    posts = user.posts.paginate(page=page, per_page=app.config["POSTS_PER_PAGE"])
 
     return render_template(
         "user.html",
@@ -149,7 +143,8 @@ def user(username):
 def category(title):
     category = Category.query.filter_by(title=title).first_or_404()
     page = request.args.get("page", 1, type=int)
-    posts = category.posts.paginate(page, app.config["POSTS_PER_PAGE"], False)
+    posts = category.posts.paginate(
+        page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
 
     return render_template(
         "category.html",
@@ -227,9 +222,3 @@ def down_vote_comment(comment_id):
         return redirect(next_page or url_for("index"))
     else:
         return redirect(url_for("login"))
-
-
-@app.route("/shutdown", methods=["GET"])
-def shutdown():
-    shutdown_server()
-    return "Server shutting down..."

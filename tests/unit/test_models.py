@@ -51,7 +51,7 @@ def test_post_body_render_should_work_with_empty_body():
     assert empty_body_post.body_as_html() is None
 
 
-def test_recent_posts_should_be_ordered(client, test_user, single_post):
+def test_recent_posts_should_be_ordered(test_db, test_user, single_post):
     single_post.timestamp = single_post.timestamp - timedelta(days=1)
     db.session.add(single_post)
     db.session.commit()
@@ -68,18 +68,18 @@ def test_posts_should_have_a_vote_count():
 
 
 def test_post_should_have_proper_status_for_user_when_new(
-    client, test_user, single_post
+    test_db, test_user, single_post
 ):
     assert not single_post.already_voted(test_user)
 
 
-def test_post_vote_count_goes_up_after_voting(client, test_user, single_post):
+def test_post_vote_count_goes_up_after_voting(test_db, test_user, single_post):
     assert single_post.vote_count == 0
     single_post.up_vote(test_user)
     assert single_post.vote_count == 1
 
 
-def test_a_user_can_only_vote_once(client, test_user, single_post):
+def test_a_user_can_only_vote_once(test_db, test_user, single_post):
     single_post.up_vote(test_user)
     single_post.up_vote(test_user)  # Should throw an exception
     assert single_post.vote_count == 1
@@ -91,7 +91,7 @@ def test_posts_have_categories():
     assert p.category == cat
 
 
-def test_categories_have_posts(client, test_user, default_category, single_post):
+def test_categories_have_posts(test_db, test_user, default_category, single_post):
     second = Post(
         title="Second post",
         body="Something saucy",
@@ -104,13 +104,13 @@ def test_categories_have_posts(client, test_user, default_category, single_post)
     assert second in default_category.posts
 
 
-def test_posts_have_comments(client, test_user, single_post):
+def test_posts_have_comments(test_db, test_user, single_post):
     c1 = single_post.add_comment("Important insight!", test_user)
     assert c1 in single_post.comments
     assert c1.vote_count == 1
 
 
-def test_comments_can_be_counted(client, test_user, single_post):
+def test_comments_can_be_counted(test_db, test_user, single_post):
     c1 = single_post.add_comment("Important insight!", test_user)
     c2 = single_post.add_comment("Later important insight!", test_user)
 
@@ -119,7 +119,7 @@ def test_comments_can_be_counted(client, test_user, single_post):
     assert single_post.comment_count() == 2
 
 
-def test_comments_can_be_voted_on(client, test_user, single_post_with_comment):
+def test_comments_can_be_voted_on(test_db, test_user, single_post_with_comment):
     comment = single_post_with_comment.comments[0]
     new_user = User(username="robot", email="robot@gmail.com")
     db.session.add(new_user)
@@ -130,7 +130,7 @@ def test_comments_can_be_voted_on(client, test_user, single_post_with_comment):
 
 
 def test_user_cannot_change_vote_count_for_own_comment(
-    client, test_user, single_post_with_comment
+    test_db, test_user, single_post_with_comment
 ):
     c = single_post_with_comment.comments[0]
     assert c.vote_count == 1
@@ -138,7 +138,7 @@ def test_user_cannot_change_vote_count_for_own_comment(
     assert c.vote_count == 1
 
 
-def test_posts_can_be_just_links_without_body(client, test_user):
+def test_posts_can_be_just_links_without_body(test_db, test_user):
     title = "Link post"
     new_post = Post(title=title, link=True, url="http://wou.edu")
     assert new_post.link
