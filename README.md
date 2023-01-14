@@ -2,7 +2,7 @@
 
 Before you clone and try to get the sample app working, you'll need a valid Python 3 (3.8 or newer) installation ([Python downloads](https://www.python.org/downloads/)).
 
-Next, make sure you have a working [SQLite3](https://www.sqlite.org/) engine installed. On MacOS or Linux it is probably already installed. You should also install the [DB Browser for SQLite](https://sqlitebrowser.org/) as this will help you inspect schemas and data. 
+Next, make sure you have a working [SQLite3](https://www.sqlite.org/) engine installed. On MacOS or Linux it is probably already installed. You should also install the [DB Browser for SQLite](https://sqlitebrowser.org/) as this will help you inspect schemas and data.
 
 ## Clone this repository to your local dev environment
 
@@ -64,18 +64,19 @@ You should see all of the migrations being applied to your development database.
 
 ## Run tests
 
-If you have `chromedriver` successfully installed, you can run all the tests:
+The easiest way to run all the tests is with the helper script:
 
 ``` sh
 $ ./runtests.sh
 ```
 
-If you don't have `chromedriver`, you can run just the unit tests:
+Note that the script will pass parameters to `pytest`, allowing you to filter tests that you run while you work on test coverage improvement. For example, if you were working on testing pagination and links to more posts, you might run:
 
 ``` sh
-$ ./runtests.sh tests/unit
+$ ./runtests.sh -k post_limit
 ```
 
+The `-k` option will do a regular expression match on test case names.
 
 ## Run dev server (local web server)
 
@@ -94,7 +95,7 @@ $ ./cov.sh
 
 ## Load up some sample posts from Reddit
 
-A great way to load up content into this Reddit clone is to copy some submissions from Reddit to your local sandbox. There's a script to perform this called `load_reddit_posts.py`, but in order to run it you'll need to configure the PRAW API with a praw.ini file. Create such a file in the root of your project, and add these entries:
+A great way to load up content into this Reddit clone is to copy some submissions from Reddit to your local sandbox. I've created a custom flask command (`sample_data load`), but in order to run it you'll need to configure the PRAW API with a praw.ini file. Create such a file in the root of your project, and add these entries:
 
 ``` ini
 [DEFAULT]
@@ -118,10 +119,13 @@ Follow these steps:
 Then you can load up some sample posts by running the following shell script:
 
 ``` sh
-$ ./load_sample_data.sh
+$ export WOLFIT_SETTINGS=$(pwd)/dev.settings
+$ flask sample_data load
 ```
 
+You can optionally give the name of a subreddit as parameter to the `load` command. By default the script will load from [`/r/learnpython`](https://www.reddit.com/r/learnpython/). This example will load recent posts from the `computerscience` subreddit:
 
-You can optionally give the name of a subreddit as the first parameter to the `python load_reddit_posts.py` portion of the script above. By default the script will load from [`/r/learnpython`](https://www.reddit.com/r/learnpython/).
-
-*Note* -- This is script is not terribly resilient and may fail with some title and body formatting issues because of the source data from Reddit. Still, it should load *some* posts allowing you have some data to work with. You can point the tool at other subreddits as well - just run `python load_reddit_posts.py --help` to see how to do this.
+``` sh
+$ export WOLFIT_SETTINGS=$(pwd)/dev.settings
+$ flask sample_data load -s computerscience
+```
