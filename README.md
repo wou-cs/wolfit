@@ -1,3 +1,5 @@
+# All About Wolfit
+
 ## First Things First: Python 3 and SQLite
 
 Before you clone and try to get the sample app working, you'll need a valid Python 3 (3.8 or newer) installation ([Python downloads](https://www.python.org/downloads/)).
@@ -9,14 +11,14 @@ Next, make sure you have a working [SQLite3](https://www.sqlite.org/) engine ins
 Your command will look something like this:
 
 ``` sh
-$ git clone https://github.com/wou-cs/wolfit.git
+git clone https://github.com/wou-cs/wolfit.git
 ```
 
 In addition, you probably want to connect this local repo to your own remote, detaching from the master repository.
 
 ``` sh
-$ cd wolfit
-$ git remote set-url origin https://new.url.here
+cd wolfit
+git remote set-url origin https://new.url.here
 ```
 
 ## Configure your settings files
@@ -26,9 +28,10 @@ You will create two settings files, one for development and one for test. These 
 * Create your own dev.settings and test.settings files (do not check these into Git). Start by copying the `example.settings` file.
 
 ``` sh
-$ cp example.settings dev.settings
-$ cp example.settings test.settings
+cp example.settings dev.settings
+cp example.settings test.settings
 ```
+
 * Each will contain two environment variables:
 
 ``` py
@@ -40,8 +43,8 @@ BLOG_DATABASE_NAME = 'wolfit_XYZ.db'
 * Configure your pipenv environment and download required Python modules. Start by getting pipenv itself working using [these instructions](https://pipenv.readthedocs.io/en/latest/). Then, in the working directory containing the clone of this app:
 
 ``` sh
-$ pipenv install
-$ pipenv shell
+pipenv install
+pipenv shell
 ```
 
 Once you have requisite libraries installed, you will *always* need to start your development session by entering the `pipenv shell`.
@@ -51,13 +54,13 @@ Once you have requisite libraries installed, you will *always* need to start you
 Now that you have your local settings files, we need to tell the Wolfit app which one to use before we setup the database. This variable is set automatically when you run `rundev.sh`, `runtests.sh`, and `cov.sh`. We need to set it manually now for the following steps:
 
 ``` sh
-$ export WOLFIT_SETTINGS=$(pwd)/dev.settings
+export WOLFIT_SETTINGS=$(pwd)/dev.settings
 ```
 
 ## Build / migrate the database
 
 ``` sh
-$ flask db upgrade
+flask db upgrade
 ```
 
 You should see all of the migrations being applied to your development database. Ignore any "unsupported ALTER" warnings: we are using a non-production quality database (SQLite) that doesn't support the full SQL language.
@@ -67,13 +70,13 @@ You should see all of the migrations being applied to your development database.
 The easiest way to run all the tests is with the helper script:
 
 ``` sh
-$ ./runtests.sh
+./runtests.sh
 ```
 
 Note that the script will pass parameters to `pytest`, allowing you to filter tests that you run while you work on test coverage improvement. For example, if you were working on testing pagination and links to more posts, you might run:
 
 ``` sh
-$ ./runtests.sh -k post_limit
+./runtests.sh -k post_limit
 ```
 
 The `-k` option will do a regular expression match on test case names.
@@ -81,16 +84,15 @@ The `-k` option will do a regular expression match on test case names.
 ## Run dev server (local web server)
 
 ``` sh
-$ ./rundev.sh
+./rundev.sh
 ```
-
 
 ## Test Coverage
 
 To look at test coverage, simply run:
 
 ``` sh
-$ ./cov.sh
+./cov.sh
 ```
 
 ## Load up some sample posts from Reddit
@@ -119,13 +121,13 @@ Follow these steps:
 Then you can load up some sample posts by running the following shell script:
 
 ``` sh
-$ export WOLFIT_SETTINGS=$(pwd)/dev.settings
-$ flask sample_data load
+export WOLFIT_SETTINGS=$(pwd)/dev.settings
+flask sample_data load
 ```
 
 You can optionally give the name of a subreddit as parameter to the `load` command. By default the script will load from [`/r/learnpython`](https://www.reddit.com/r/learnpython/). This example will load recent posts from the `computerscience` subreddit:
 
 ``` sh
-$ export WOLFIT_SETTINGS=$(pwd)/dev.settings
-$ flask sample_data load -s computerscience
+export WOLFIT_SETTINGS=$(pwd)/dev.settings
+flask sample_data load -s computerscience
 ```
