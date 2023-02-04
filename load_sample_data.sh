@@ -1,5 +1,3 @@
-#!/bin/bash
-export FLASK_ENV=development
-export FLASK_DEBUG=0
+#!/usr/bin/env bash
 export WOLFIT_SETTINGS=$(pwd)/dev.settings
-python load_reddit_posts.py
+flask sample_data load
