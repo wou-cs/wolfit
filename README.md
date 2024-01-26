@@ -59,10 +59,9 @@ We need to create the development database, which you will allow you to run the 
 ./create_dev_db.sh
 ```
 
-
 ### Manually
 
-Now that you have your local settings files, we need to tell the Wolfit app which one to use before we setup the database. This variable is set automatically when you run `rundev.sh`, `runtests.sh`, and `cov.sh`. We need to set it manually now for the following steps:
+You can also do this manually. First, we need to tell the Wolfit app which one to use before we setup the database. This variable is set automatically when you run `rundev.sh`, `runtests.sh`, and `cov.sh`. We need to set it manually now for the following steps:
 
 ``` sh
 export WOLFIT_SETTINGS=$(pwd)/dev.settings
@@ -105,6 +104,16 @@ To look at test coverage, simply run:
 ``` sh
 ./cov.sh
 ```
+
+### If you are on WSL...
+
+The final line in the `cov.sh` scripts "opens" the generated web page. You can just browse to the generated `htmlcov/index.html` file in Explorer and open it from there in your browser. Or, with a little more work you can probably get it to work natively. Install the WSL utilities package:
+
+``` sh
+sudo apt install wslu
+```
+
+Then run `cov.sh`.
 
 ## Load up some sample posts from Reddit
 

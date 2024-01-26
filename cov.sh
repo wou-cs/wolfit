@@ -6,3 +6,10 @@ export FLASK_DEBUG=0
 coverage run --source "." --omit app/commands.py -m pytest
 coverage html
 open htmlcov/index.html
+
+set -e
+if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null ; then
+        sensible-browser htmlcov/index.html
+else
+        open htmlcov/index.html
+fi
