@@ -49,7 +49,18 @@ pipenv shell
 
 Once you have requisite libraries installed, you will *always* need to start your development session by entering the `pipenv shell`.
 
-## Set the WOLFIT_SETTINGS environment variable
+## Build / migrate the development database
+
+### Automatically
+
+We need to create the development database, which you will allow you to run the application and interact with Wolfit. The simplest way is to run the utility script:
+
+``` sh
+./create_dev_db.sh
+```
+
+
+### Manually
 
 Now that you have your local settings files, we need to tell the Wolfit app which one to use before we setup the database. This variable is set automatically when you run `rundev.sh`, `runtests.sh`, and `cov.sh`. We need to set it manually now for the following steps:
 
@@ -57,7 +68,7 @@ Now that you have your local settings files, we need to tell the Wolfit app whic
 export WOLFIT_SETTINGS=$(pwd)/dev.settings
 ```
 
-## Build / migrate the database
+Now run the database upgrade, which will create
 
 ``` sh
 flask db upgrade
