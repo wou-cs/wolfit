@@ -43,11 +43,11 @@ BLOG_DATABASE_NAME = 'wolfit_XYZ.db'
 * Configure your pipenv environment and download required Python modules. Start by getting pipenv itself working using [these instructions](https://pipenv.readthedocs.io/en/latest/). Then, in the working directory containing the clone of this app:
 
 ``` sh
-pipenv install
+pipenv install -d
 pipenv shell
 ```
 
-Once you have requisite libraries installed, you will *always* need to start your development session by entering the `pipenv shell`.
+Once you have requisite libraries installed, you will *always* need to start your development session by entering the `pipenv shell`. We use the `-d` option to install development packages specified in the Pipfile.
 
 ## Build / migrate the development database
 
